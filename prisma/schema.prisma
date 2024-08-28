@@ -13,74 +13,36 @@ enum UserType {
   TEACHER
 }
 
+enum RoomRole {
+  GUEST
+  ADMIN
+  MODERATORS
+}
+
+
 enum TopicContentType {
   PDF
-  WORD
   VIDEO
-  AUDIO
 }
 
 // Student and Admin model
 // a student can be in many classrooms
 model User {
-  id             String    @id @default(auto()) @map("_id") @db.ObjectId
-  username       String    @unique
-  firstname      String?
-  lastname       String?
-  age            Int?
-  email          String    @unique
-  classroomId    String[]  @db.ObjectId
-  attempt        Attempt[]
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  username    String   @unique
+  firstname   String?
+  secondname  String?
+  age         Int?
+  email       String   @unique
+  classroomId String[] @db.ObjectId            // will be empty for admin
+  usertype    UserType @default(STUDENT)
   profilePicture String?
-  usertype       UserType  @default(STUDENT)
-
-  clerkId        String            @unique
-  createdAt      DateTime          @default(now())
-  updatedAt      DateTime          @updatedAt
-  StudentInClass StudentsInClass[]
+  clerkId   String    @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  Attempt   Attempt[]
 }
 
-// Teacher model
-model Teacher {
-  id              String      @id @default(auto()) @map("_id") @db.ObjectId
-  email           String      @unique
-  username        String      @unique
-  firstname       String?
-  secondname      String?
-  clerkId         String      @unique
-  teachingsubject String
-  classroomId     String[]    @db.ObjectId
-  classrooms      ClassRoom[] @relation(fields: [classroomId], references: [id])
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
-}
-
-// ClassRoom model
-// many students can be in a classroom
-
-model StudentsInClass {
-  id          String    @id @default(auto()) @map("_id") @db.ObjectId
-  studentId   String    @db.ObjectId
-  student     User      @relation(fields: [studentId], references: [id])
-  classRoomId String    @db.ObjectId
-  classRoom   ClassRoom @relation(fields: [classRoomId], references: [id])
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-}
-
-model ClassRoom {
-  id        String            @id @default(auto()) @map("_id") @db.ObjectId
-  name      String            @unique
-  teacherId String[]          @db.ObjectId
-  teachers  Teacher[]         @relation(fields: [teacherId], references: [id])
-  students  StudentsInClass[]
-  topics    Topic[]
-  createdAt DateTime          @default(now())
-  updatedAt DateTime          @updatedAt
-}
-
-// TopicContent model (PDF, WORD, VIDEO, AUDIO)
-// This model refers to the content of a topic
 model TopicContent {
   id          String           @id @default(auto()) @map("_id") @db.ObjectId
   topicId     String           @db.ObjectId
@@ -91,21 +53,22 @@ model TopicContent {
   updatedAt   DateTime         @updatedAt
 }
 
-// Topic model
-// This model refers to the subject of a class
+// // Topic model
+// // This model refers to the subject of a class
 model Topic {
-  id           String         @id @default(auto()) @map("_id") @db.ObjectId
-  name         String         @unique
-  classRoomId  String         @db.ObjectId
-  classRoom    ClassRoom      @relation(fields: [classRoomId], references: [id], onDelete: Cascade)
-  topicContent TopicContent[]
-  quizzes      Quiz[]
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  name        String @unique
+  classRoomId String @db.ObjectId
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
+  TopicContent TopicContent[]
+  Room         Room?          @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  roomId       String?        @db.ObjectId
+  Quiz         Quiz[]
 }
 
-// Quiz model
-// This model refers to the quiz of a topic
+// // Quiz model
+// // This model refers to the quiz of a topic
 model Quiz {
   id        String     @id @default(auto()) @map("_id") @db.ObjectId
   title     String     @unique
@@ -117,32 +80,54 @@ model Quiz {
   updatedAt DateTime   @updatedAt
 }
 
-// Question model
-// This model refers to the question of a quiz
+// // Question model
+// // This model refers to the question of a quiz
 model Question {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   question  String
   options   String[]
   answer    String
+  description String
   quizId    String   @db.ObjectId
   quiz      Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  Attempt   Attempt? @relation(fields: [attemptId], references: [id])
   attemptId String?  @db.ObjectId
 }
 
-// Attempt model
+// // Attempt model
 // This model refers to the attempt of a student on a quiz
 model Attempt {
   id        String     @id @default(auto()) @map("_id") @db.ObjectId
   score     Int
   quizId    String     @db.ObjectId
   quiz      Quiz       @relation(fields: [quizId], references: [id], onDelete: Cascade)
-  question  Question[]
   answers   String[]
   studentId String     @db.ObjectId
   student   User       @relation(fields: [studentId], references: [id], onDelete: Cascade)
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
 }
+
+// class room model
+model Room {
+  id        String       @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  creatorId String       @db.ObjectId
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  members   RoomMember[]
+  topics    Topic[]
+}
+
+// Members of a classroom (subject)
+model RoomMember {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  roomId    String   @db.ObjectId
+  userId    String   @db.ObjectId
+  role      RoomRole @default(GUEST)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Room      Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+}
+

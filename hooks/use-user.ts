@@ -1,5 +1,5 @@
-import { db } from "@/lib/db";
-import { currentUser } from "@clerk/nextjs/server";
+import { db } from '@/lib/db';
+import { currentUser } from '@clerk/nextjs/server';
 
 export async function useUser() {
   try {
@@ -20,10 +20,9 @@ export async function useUser() {
         clerkId: user.id,
         email: user.emailAddresses[0].emailAddress,
         firstname: user.firstName,
-        lastname: user.lastName,
+        secondname: user.lastName,
         profilePicture: user.imageUrl,
-        usertype: "ADMIN",
-        username: user.username ? user.username : "noname",
+        username: user.username ? user.username : 'noname',
       },
     });
 
