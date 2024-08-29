@@ -58,6 +58,12 @@ export async function POST(req: NextApiRequest) {
       data: {
         name: name.toLowerCase(),
         creatorId: teacher.id,
+        members: {
+          create: {
+            userId: teacher.id,
+            role: 'ADMIN',
+          },
+        },
       },
     });
 
