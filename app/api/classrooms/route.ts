@@ -1,17 +1,18 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getAuth } from '@clerk/nextjs/server';
 import { db } from '@/lib/db';
-import { NextApiRequest } from 'next';
 import { reqRoomBodySchema } from '@/schema';
+import { currentUser } from '@clerk/nextjs/server';
+import { NextResponse } from 'next/server';
 
-export async function POST(req: NextApiRequest) {
+export async function POST(req: Request) {
   try {
-    const { userId } = getAuth(req);
-    if (!userId) {
+    const user = await currentUser();
+    if (!user) {
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
 
-    const bodyValidation = reqRoomBodySchema.safeParse(req.body);
+    const body = await req.json();
+
+    const bodyValidation = reqRoomBodySchema.safeParse(body);
     if (!bodyValidation.success) {
       return NextResponse.json(
         { message: 'Invalid request body' },
@@ -30,7 +31,7 @@ export async function POST(req: NextApiRequest) {
 
     const teacher = await db.user.findUnique({
       where: {
-        clerkId: userId,
+        clerkId: user.id,
       },
     });
 
