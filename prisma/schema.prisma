@@ -110,13 +110,14 @@ model Attempt {
 
 // class room model
 model Room {
-  id        String       @id @default(auto()) @map("_id") @db.ObjectId
-  name      String
-  creatorId String       @db.ObjectId
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
-  members   RoomMember[]
-  topics    Topic[]
+  id          String       @id @default(auto()) @map("_id") @db.ObjectId
+  name        String       @unique
+  description String?
+  creatorId   String       @db.ObjectId
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  members     RoomMember[]
+  topics      Topic[]
 }
 
 // Members of a classroom (subject)
