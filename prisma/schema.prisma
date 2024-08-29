@@ -19,7 +19,6 @@ enum RoomRole {
   MODERATORS
 }
 
-
 enum TopicContentType {
   PDF
   VIDEO
@@ -28,19 +27,19 @@ enum TopicContentType {
 // Student and Admin model
 // a student can be in many classrooms
 model User {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  username    String   @unique
-  firstname   String?
-  secondname  String?
-  age         Int?
-  email       String   @unique
-  classroomId String[] @db.ObjectId            // will be empty for admin
-  usertype    UserType @default(STUDENT)
+  id             String    @id @default(auto()) @map("_id") @db.ObjectId
+  username       String    @unique
+  firstname      String?
+  secondname     String?
+  age            Int?
+  email          String    @unique
+  classroomId    String[]  @db.ObjectId // will be empty for admin
+  usertype       UserType  @default(STUDENT)
   profilePicture String?
-  clerkId   String    @unique
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  Attempt   Attempt[]
+  clerkId        String    @unique
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  Attempt        Attempt[]
 }
 
 model TopicContent {
@@ -56,9 +55,9 @@ model TopicContent {
 // // Topic model
 // // This model refers to the subject of a class
 model Topic {
-  id          String @id @default(auto()) @map("_id") @db.ObjectId
-  name        String @unique
-  classRoomId String @db.ObjectId
+  id           String         @id @default(auto()) @map("_id") @db.ObjectId
+  name         String         @unique
+  classRoomId  String         @db.ObjectId
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
   TopicContent TopicContent[]
@@ -83,30 +82,30 @@ model Quiz {
 // // Question model
 // // This model refers to the question of a quiz
 model Question {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  question  String
-  options   String[]
-  answer    String
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  question    String
+  options     String[]
+  answer      String
   description String
-  quizId    String   @db.ObjectId
-  quiz      Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  attemptId String?  @db.ObjectId
+  quizId      String   @db.ObjectId
+  quiz        Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  attemptId   String?  @db.ObjectId
 }
 
 // // Attempt model
 // This model refers to the attempt of a student on a quiz
 model Attempt {
-  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
   score     Int
-  quizId    String     @db.ObjectId
-  quiz      Quiz       @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  quizId    String   @db.ObjectId
+  quiz      Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
   answers   String[]
-  studentId String     @db.ObjectId
-  student   User       @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  studentId String   @db.ObjectId
+  student   User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 // class room model
@@ -130,4 +129,3 @@ model RoomMember {
   updatedAt DateTime @updatedAt
   Room      Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
 }
-
