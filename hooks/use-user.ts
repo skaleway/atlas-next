@@ -20,10 +20,10 @@ export async function useUser() {
         clerkId: user.id,
         email: user.emailAddresses[0].emailAddress,
         firstname: user.firstName,
-        lastname: user.lastName,
+        secondname: user.lastName,
         profilePicture: user.imageUrl,
         usertype: "STUDENT",
-        username: user.username ? user.username : "noname",
+        username: user.username ? user.username : "",
       },
     });
 
