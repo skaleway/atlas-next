@@ -1,6 +1,3 @@
-import Link from "next/link";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { Hero, Unlock, WhatWeOffer, WhatWeProvide } from "./_components";
 
 export default function Component() {

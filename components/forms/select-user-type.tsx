@@ -2,14 +2,17 @@
 
 import * as z from "zod";
 import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { UserTypeSchema } from "@/schema";
 import { UserType } from "@prisma/client";
+import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import { UserTypeSchema } from "@/schema";
 import { cn } from "@/lib/utils";
 
 const SelectUserType = () => {
   const [active, setActive] = useState(0);
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof UserTypeSchema>>({
     resolver: zodResolver(UserTypeSchema),
@@ -20,7 +23,13 @@ const SelectUserType = () => {
 
   async function onSubmit(values: z.infer<typeof UserTypeSchema>) {
     try {
-      console.log(values);
+      if (values.type === "STUDENT") {
+        await router.push("/dashboard/student");
+      }
+
+      if (values.type === "TEACHER") {
+        await router.push("/dashboard/teacher");
+      }
     } catch (error: any) {}
   }
 

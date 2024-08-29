@@ -22,7 +22,7 @@ export async function useUser() {
         firstname: user.firstName,
         lastname: user.lastName,
         profilePicture: user.imageUrl,
-        usertype: "ADMIN",
+        usertype: "STUDENT",
         username: user.username ? user.username : "noname",
       },
     });

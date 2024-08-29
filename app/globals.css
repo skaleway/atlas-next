@@ -60,6 +60,9 @@
 }
 
 @layer base {
+  .center {
+    @apply items-center justify-center flex;
+  }
   * {
     @apply border-border;
   }
