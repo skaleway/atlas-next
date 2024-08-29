@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { useUser } from '@/hooks/use-user';
 
 export async function GET() {
   try {
@@ -12,21 +13,23 @@ export async function GET() {
   }
 }
 
-export async function POST(req: NextRequest) {
-  try {
-    const { firstname, secondname, email, usertype, username, profilePicture } =
-      await req.json();
+// export async function POST(req: NextRequest) {
+//   try {
+//     const newUser = await useUser();
 
-    return NextResponse.json({
-      firstname,
-      secondname,
-      email,
-      usertype,
-      username,
-      profilePicture,
-    });
-  } catch (error: any) {
-    console.log(error.message);
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
-}
+//     if (!newUser) {
+//       return NextResponse.json({ error: 'User not found' }, { status: 404 });
+//     }
+
+//     const user = await db.user.create({
+//       data: {
+//         ...newUser,
+//       },
+//     });
+
+//     return NextResponse.json(user, { status: 201 });
+//   } catch (error: any) {
+//     console.log(error.message);
+//     return NextResponse.json({ error: error.message }, { status: 500 });
+//   }
+// }
