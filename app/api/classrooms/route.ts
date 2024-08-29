@@ -1,21 +1,21 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getAuth } from '@clerk/nextjs/server';
-import { db } from '@/lib/db';
-import { NextApiRequest } from 'next';
-import { reqRoomBodySchema } from '@/schema';
+import { NextRequest, NextResponse } from "next/server";
+import { getAuth } from "@clerk/nextjs/server";
+import { db } from "@/lib/db";
+import { NextApiRequest } from "next";
+import { reqRoomBodySchema } from "@/schema";
 
 export async function POST(req: NextApiRequest) {
   try {
     const { userId } = getAuth(req);
     if (!userId) {
-      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
     const bodyValidation = reqRoomBodySchema.safeParse(req.body);
     if (!bodyValidation.success) {
       return NextResponse.json(
-        { message: 'Invalid request body' },
-        { status: 400 },
+        { message: "Invalid request body" },
+        { status: 400 }
       );
     }
 
@@ -23,8 +23,8 @@ export async function POST(req: NextApiRequest) {
 
     if (!name) {
       return NextResponse.json(
-        { message: 'class name is required for class creation' },
-        { status: 400 },
+        { message: "class name is required for class creation" },
+        { status: 400 }
       );
     }
 
@@ -34,10 +34,10 @@ export async function POST(req: NextApiRequest) {
       },
     });
 
-    if (!teacher || teacher.usertype !== 'TEACHER') {
+    if (!teacher || teacher.usertype !== "TEACHER") {
       return NextResponse.json(
-        { message: 'unauthorized access' },
-        { status: 401 },
+        { message: "unauthorized access" },
+        { status: 401 }
       );
     }
 
@@ -49,8 +49,8 @@ export async function POST(req: NextApiRequest) {
 
     if (findroom) {
       return NextResponse.json(
-        { message: 'class already exists' },
-        { status: 400 },
+        { message: "class already exists" },
+        { status: 400 }
       );
     }
 
@@ -61,7 +61,7 @@ export async function POST(req: NextApiRequest) {
         members: {
           create: {
             userId: teacher.id,
-            role: 'ADMIN',
+            role: "ADMIN",
           },
         },
       },
@@ -69,13 +69,13 @@ export async function POST(req: NextApiRequest) {
 
     if (!createroom) {
       return NextResponse.json(
-        { message: 'class not created ' },
-        { status: 400 },
+        { message: "class not created " },
+        { status: 400 }
       );
     }
 
     return NextResponse.json({
-      message: 'class created successfully',
+      message: "class created successfully",
       data: createroom,
     });
   } catch (error: any) {

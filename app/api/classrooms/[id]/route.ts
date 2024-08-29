@@ -1,10 +1,12 @@
-import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { currentUser, getAuth } from "@clerk/nextjs/server";
-import { NextApiRequest } from "next";
 import { querySchema, reqRoomBodySchema } from "@/schema";
+import { currentUser } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
 
-export async function PUT(req: Request) {
+export async function PUT(
+  { params }: { params: { id: string } },
+  req: Request
+) {
   try {
     const user = await currentUser();
     const body = await req.json();
