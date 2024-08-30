@@ -3,7 +3,10 @@ import { db } from '@/lib/db';
 import { classroomQuerySchema, reqClassroomMembersBodySchema } from '@/schema';
 import { currentUser } from '@clerk/nextjs/server';
 
-export async function GET({ params }: { params: { classroomId: string } }) {
+export async function GET(
+  req: NextRequest,
+  { params }: { params: { classroomId: string } },
+) {
   try {
     const validateParams = classroomQuerySchema.safeParse(params);
 

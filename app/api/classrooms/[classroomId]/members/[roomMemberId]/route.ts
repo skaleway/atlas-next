@@ -3,11 +3,14 @@ import { db } from '@/lib/db';
 import { currentUser } from '@clerk/nextjs/server';
 import { classroomQuerySchema } from '@/schema';
 
-export async function GET({
-  params,
-}: {
-  params: { classroomId: string; roomMemberId: string };
-}) {
+export async function GET(
+  req: NextRequest,
+  {
+    params,
+  }: {
+    params: { classroomId: string; roomMemberId: string };
+  },
+) {
   try {
     const validateParams = classroomQuerySchema.safeParse(params);
 
@@ -41,11 +44,14 @@ export async function GET({
   }
 }
 
-export async function DELETE({
-  params,
-}: {
-  params: { classroomId: string; roomMemberId: string };
-}) {
+export async function DELETE(
+  req: NextRequest,
+  {
+    params,
+  }: {
+    params: { classroomId: string; roomMemberId: string };
+  },
+) {
   try {
     const user = await currentUser();
 

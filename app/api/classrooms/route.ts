@@ -1,4 +1,3 @@
-
 import { db } from '@/lib/db';
 import { reqRoomBodySchema } from '@/schema';
 import { currentUser } from '@clerk/nextjs/server';
@@ -6,7 +5,6 @@ import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
   try {
-
     const user = await currentUser();
     if (!user) {
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
@@ -17,8 +15,8 @@ export async function POST(req: Request) {
     const bodyValidation = reqRoomBodySchema.safeParse(body);
     if (!bodyValidation.success) {
       return NextResponse.json(
-        { message: "Invalid request body" },
-        { status: 400 }
+        { message: 'Invalid request body' },
+        { status: 400 },
       );
     }
 
@@ -26,8 +24,8 @@ export async function POST(req: Request) {
 
     if (!name) {
       return NextResponse.json(
-        { message: "class name is required for class creation" },
-        { status: 400 }
+        { message: 'class name is required for class creation' },
+        { status: 400 },
       );
     }
 
@@ -37,10 +35,10 @@ export async function POST(req: Request) {
       },
     });
 
-    if (!teacher || teacher.usertype !== "TEACHER") {
+    if (!teacher || teacher.usertype !== 'TEACHER') {
       return NextResponse.json(
-        { message: "unauthorized access" },
-        { status: 401 }
+        { message: 'unauthorized access' },
+        { status: 401 },
       );
     }
 
@@ -52,8 +50,8 @@ export async function POST(req: Request) {
 
     if (findroom) {
       return NextResponse.json(
-        { message: "class already exists" },
-        { status: 400 }
+        { message: 'class already exists' },
+        { status: 400 },
       );
     }
 
@@ -64,7 +62,7 @@ export async function POST(req: Request) {
         members: {
           create: {
             userId: teacher.id,
-            role: "ADMIN",
+            role: 'ADMIN',
           },
         },
       },
@@ -72,13 +70,13 @@ export async function POST(req: Request) {
 
     if (!createroom) {
       return NextResponse.json(
-        { message: "class not created " },
-        { status: 400 }
+        { message: 'class not created ' },
+        { status: 400 },
       );
     }
 
     return NextResponse.json({
-      message: "class created successfully",
+      message: 'class created successfully',
       data: createroom,
     });
   } catch (error: any) {
@@ -90,6 +88,13 @@ export async function POST(req: Request) {
 export async function GET() {
   try {
     const rooms = await db.room.findMany();
+
+    if (!rooms) {
+      return NextResponse.json(
+        { message: 'No classes found' },
+        { status: 404 },
+      );
+    }
 
     return NextResponse.json(rooms);
   } catch (error: any) {

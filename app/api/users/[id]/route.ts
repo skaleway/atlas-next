@@ -3,7 +3,10 @@ import { currentUser } from '@clerk/nextjs/server';
 import { db } from '@/lib/db';
 import { putUserRequestBodySchema, querySchema } from '@/schema';
 
-export async function GET({ params }: { params: { id: string } }) {
+export async function GET(
+  req: NextRequest,
+  { params }: { params: { id: string } },
+) {
   try {
     const user = await db.user.findUnique({
       where: {

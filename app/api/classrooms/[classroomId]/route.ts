@@ -1,7 +1,7 @@
 import { db } from '@/lib/db';
 import { classroomQuerySchema, querySchema, reqRoomBodySchema } from '@/schema';
 import { currentUser } from '@clerk/nextjs/server';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
 export async function PUT(
   req: Request,
@@ -121,7 +121,10 @@ export async function PUT(
   }
 }
 
-export async function DELETE({ params }: { params: { classroomId: string } }) {
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: { classroomId: string } },
+) {
   try {
     const user = await currentUser();
 
@@ -196,7 +199,10 @@ export async function DELETE({ params }: { params: { classroomId: string } }) {
   }
 }
 
-export async function GET({ params }: { params: { id: string } }) {
+export async function GET(
+  req: NextRequest,
+  { params }: { params: { id: string } },
+) {
   try {
     const user = await currentUser();
 
