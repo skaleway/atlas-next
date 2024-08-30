@@ -7,8 +7,20 @@ export const UserTypeSchema = z.object({
   }),
 });
 
+export const classroomQuerySchema = z.object({
+  roomMemberId: z.string().optional(),
+  classroomId: z.string().nonempty('ID is required'),
+});
+
 export const querySchema = z.object({
   id: z.string().nonempty('ID is required'),
+});
+
+export const reqClassroomMembersBodySchema = z.object({
+  userId: z.string().nonempty('User ID is required'),
+  role: z.enum([RoomRole.ADMIN, RoomRole.MODERATORS, RoomRole.GUEST], {
+    required_error: 'Role is required',
+  }),
 });
 
 export const reqRoomBodySchema = z.object({

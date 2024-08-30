@@ -1,11 +1,11 @@
 import { db } from '@/lib/db';
-import { querySchema, reqRoomBodySchema } from '@/schema';
+import { classroomQuerySchema, querySchema, reqRoomBodySchema } from '@/schema';
 import { currentUser } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 
 export async function PUT(
   req: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: { classroomId: string } },
 ) {
   try {
     const user = await currentUser();
@@ -34,14 +34,14 @@ export async function PUT(
     }
 
     // Validate query parameters
-    const queryValidation = querySchema.safeParse(params);
+    const queryValidation = classroomQuerySchema.safeParse(params);
     if (!queryValidation.success) {
       return NextResponse.json(
         { message: queryValidation.error.errors[0].message },
         { status: 400 },
       );
     }
-    const { id } = queryValidation.data;
+    const { classroomId } = queryValidation.data;
 
     // Validate request body
     const bodyValidation = reqRoomBodySchema.safeParse(body);
@@ -61,7 +61,7 @@ export async function PUT(
     }
 
     const findClassroom = await db.room.findUnique({
-      where: { id: String(id) },
+      where: { id: String(classroomId) },
     });
 
     if (!findClassroom) {
@@ -104,7 +104,7 @@ export async function PUT(
     }
 
     const updateClassroom = await db.room.update({
-      where: { id: String(id) },
+      where: { id: String(classroomId) },
       data: toUpdate,
     });
 
@@ -121,7 +121,7 @@ export async function PUT(
   }
 }
 
-export async function DELETE({ params }: { params: { id: string } }) {
+export async function DELETE({ params }: { params: { classroomId: string } }) {
   try {
     const user = await currentUser();
 
@@ -129,9 +129,18 @@ export async function DELETE({ params }: { params: { id: string } }) {
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
 
-    const { id } = params;
+    const validateParams = classroomQuerySchema.safeParse(params);
 
-    if (!id) {
+    if (!validateParams.success) {
+      return NextResponse.json(
+        { message: validateParams.error.errors[0].message },
+        { status: 400 },
+      );
+    }
+
+    const { classroomId } = params;
+
+    if (!classroomId) {
       return NextResponse.json(
         { message: 'Classroom ID is required' },
         { status: 400 },
@@ -157,7 +166,7 @@ export async function DELETE({ params }: { params: { id: string } }) {
 
     const findClassroom = await db.room.findUnique({
       where: {
-        id: String(id),
+        id: String(classroomId),
       },
     });
 
@@ -170,7 +179,7 @@ export async function DELETE({ params }: { params: { id: string } }) {
 
     const deleteClassroom = await db.room.delete({
       where: {
-        id: String(id),
+        id: String(classroomId),
       },
     });
 
