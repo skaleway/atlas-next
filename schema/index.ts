@@ -1,5 +1,5 @@
 import * as z from 'zod';
-import { UserType } from '@prisma/client';
+import { UserType, RoomRole } from '@prisma/client';
 
 export const UserTypeSchema = z.object({
   type: z.enum([UserType.ADMIN, UserType.TEACHER, UserType.STUDENT], {
@@ -22,7 +22,9 @@ export const putUserRequestBodySchema = z.object({
   secondname: z.string().optional(),
   email: z.string().email().optional(),
   age: z.number().optional(),
-  usertype: z.enum(['ADMIN', 'TEACHER', 'STUDENT']).optional(),
+  usertype: z
+    .enum([RoomRole.ADMIN, RoomRole.MODERATORS, RoomRole.GUEST])
+    .optional(),
   profilePicture: z.string().optional(),
   classroomId: z.array(z.string()).optional(),
 });
