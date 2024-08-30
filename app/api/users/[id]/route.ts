@@ -3,6 +3,28 @@ import { currentUser } from '@clerk/nextjs/server';
 import { db } from '@/lib/db';
 import { putUserRequestBodySchema, querySchema } from '@/schema';
 
+export async function GET({ params }: { params: { id: string } }) {
+  try {
+    const user = await db.user.findUnique({
+      where: {
+        id: params.id,
+      },
+    });
+
+    if (!user) {
+      return NextResponse.json({ message: 'User not found' }, { status: 404 });
+    }
+
+    return NextResponse.json({ data: user }, { status: 200 });
+  } catch (error: any) {
+    console.error(error.message);
+    return NextResponse.json(
+      { message: 'Internal server error' },
+      { status: 500 },
+    );
+  }
+}
+
 export async function PUT(
   req: NextRequest,
   { params }: { params: { id: string } },
