@@ -1,11 +1,11 @@
-import { db } from "@/lib/db";
-import { querySchema, reqRoomBodySchema } from "@/schema";
-import { currentUser } from "@clerk/nextjs/server";
-import { NextResponse } from "next/server";
+import { db } from '@/lib/db';
+import { querySchema, reqRoomBodySchema } from '@/schema';
+import { currentUser } from '@clerk/nextjs/server';
+import { NextResponse } from 'next/server';
 
 export async function PUT(
+  req: Request,
   { params }: { params: { id: string } },
-  req: Request
 ) {
   try {
     const user = await currentUser();
@@ -13,8 +13,8 @@ export async function PUT(
 
     if (!user) {
       return NextResponse.json(
-        { message: "Unauthorized to update classroom" },
-        { status: 401 }
+        { message: 'Unauthorized to update classroom' },
+        { status: 401 },
       );
     }
 
@@ -23,40 +23,40 @@ export async function PUT(
     });
 
     if (!findUser) {
-      return NextResponse.json({ message: "User not found" }, { status: 404 });
+      return NextResponse.json({ message: 'User not found' }, { status: 404 });
     }
 
-    if (findUser.usertype !== "TEACHER" && findUser.usertype !== "ADMIN") {
+    if (findUser.usertype !== 'TEACHER' && findUser.usertype !== 'ADMIN') {
       return NextResponse.json(
-        { message: "Unauthorized to update classroom" },
-        { status: 401 }
+        { message: 'Unauthorized to update classroom' },
+        { status: 401 },
       );
     }
 
     // Validate query parameters
-    const queryValidation = querySchema.safeParse(body);
+    const queryValidation = querySchema.safeParse(params);
     if (!queryValidation.success) {
       return NextResponse.json(
         { message: queryValidation.error.errors[0].message },
-        { status: 400 }
+        { status: 400 },
       );
     }
     const { id } = queryValidation.data;
 
     // Validate request body
-    const bodyValidation = reqRoomBodySchema.safeParse(req.body);
+    const bodyValidation = reqRoomBodySchema.safeParse(body);
     if (!bodyValidation.success) {
       return NextResponse.json(
-        { message: "Invalid request body" },
-        { status: 400 }
+        { message: 'Invalid request body' },
+        { status: 400 },
       );
     }
     const { name, creatorId } = bodyValidation.data;
 
     if (!name && !creatorId) {
       return NextResponse.json(
-        { message: "Values are required" },
-        { status: 400 }
+        { message: 'Values are required' },
+        { status: 400 },
       );
     }
 
@@ -66,8 +66,8 @@ export async function PUT(
 
     if (!findClassroom) {
       return NextResponse.json(
-        { message: "Classroom not found" },
-        { status: 404 }
+        { message: 'Classroom not found' },
+        { status: 404 },
       );
     }
 
@@ -80,8 +80,8 @@ export async function PUT(
 
       if (findRoom) {
         return NextResponse.json(
-          { message: "Classroom already exists" },
-          { status: 400 }
+          { message: 'Classroom already exists' },
+          { status: 400 },
         );
       }
 
@@ -95,8 +95,8 @@ export async function PUT(
 
       if (!findUser) {
         return NextResponse.json(
-          { message: "User not found" },
-          { status: 404 }
+          { message: 'User not found' },
+          { status: 404 },
         );
       }
 
@@ -109,14 +109,14 @@ export async function PUT(
     });
 
     return NextResponse.json({
-      message: "Classroom updated successfully",
+      message: 'Classroom updated successfully',
       data: updateClassroom,
     });
   } catch (error: any) {
     console.error(error.message);
     return NextResponse.json(
-      { message: "Internal Server Error" },
-      { status: 500 }
+      { message: 'Internal Server Error' },
+      { status: 500 },
     );
   }
 }
