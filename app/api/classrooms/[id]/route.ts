@@ -34,7 +34,7 @@ export async function PUT(
     }
 
     // Validate query parameters
-    const queryValidation = querySchema.safeParse(body);
+    const queryValidation = querySchema.safeParse(params);
     if (!queryValidation.success) {
       return NextResponse.json(
         { message: queryValidation.error.errors[0].message },
@@ -44,7 +44,7 @@ export async function PUT(
     const { id } = queryValidation.data;
 
     // Validate request body
-    const bodyValidation = reqRoomBodySchema.safeParse(req.body);
+    const bodyValidation = reqRoomBodySchema.safeParse(body);
     if (!bodyValidation.success) {
       return NextResponse.json(
         { message: 'Invalid request body' },
