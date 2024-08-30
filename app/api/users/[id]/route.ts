@@ -1,18 +1,22 @@
-import { NextResponse } from 'next/server';
-import { getAuth } from '@clerk/nextjs/server';
+import { NextRequest, NextResponse } from 'next/server';
+import { currentUser, getAuth } from '@clerk/nextjs/server';
 import { db } from '@/lib/db';
 
 import { NextApiRequest } from 'next';
 
-export async function PUT(req: NextApiRequest) {
+export async function PUT(
+  req: NextRequest,
+  { params }: { params: { id: string } },
+) {
   try {
-    const { userId } = getAuth(req);
-    if (!userId) {
+    const user = await currentUser();
+    if (!user) {
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
 
-    const { id } = req.query;
-    const { classroomId, ...values } = req.body;
+    const { id } = params;
+    const body = await req.json();
+    const { values, classroomId } = body;
 
     if (!id) {
       return NextResponse.json(
@@ -120,14 +124,17 @@ export async function PUT(req: NextApiRequest) {
   }
 }
 
-export async function DELETE(req: NextApiRequest) {
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: { id: string } },
+) {
   try {
     const { userId } = getAuth(req);
     if (!userId) {
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
 
-    const { id } = req.query;
+    const { id } = params;
 
     if (!id) {
       return NextResponse.json(
