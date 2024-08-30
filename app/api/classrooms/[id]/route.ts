@@ -120,3 +120,69 @@ export async function PUT(
     );
   }
 }
+
+export async function DELETE({ params }: { params: { id: string } }) {
+  try {
+    const user = await currentUser();
+
+    if (!user) {
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { id } = params;
+
+    if (!id) {
+      return NextResponse.json(
+        { message: 'Classroom ID is required' },
+        { status: 400 },
+      );
+    }
+
+    const findUser = await db.user.findUnique({
+      where: {
+        id: user.id,
+      },
+    });
+
+    if (!findUser) {
+      return NextResponse.json({ message: 'User not found' }, { status: 404 });
+    }
+
+    if (findUser.usertype !== 'TEACHER' && findUser.usertype !== 'ADMIN') {
+      return NextResponse.json(
+        { message: 'Unauthorized to delete classroom' },
+        { status: 401 },
+      );
+    }
+
+    const findClassroom = await db.room.findUnique({
+      where: {
+        id: String(id),
+      },
+    });
+
+    if (!findClassroom) {
+      return NextResponse.json(
+        { message: 'Classroom not found' },
+        { status: 404 },
+      );
+    }
+
+    const deleteClassroom = await db.room.delete({
+      where: {
+        id: String(id),
+      },
+    });
+
+    return NextResponse.json({
+      message: 'Classroom deleted successfully',
+      data: deleteClassroom,
+    });
+  } catch (error: any) {
+    console.error(error.message);
+    return NextResponse.json(
+      { message: 'Internal server error' },
+      { status: 500 },
+    );
+  }
+}
