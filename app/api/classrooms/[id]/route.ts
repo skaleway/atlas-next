@@ -186,3 +186,46 @@ export async function DELETE({ params }: { params: { id: string } }) {
     );
   }
 }
+
+export async function GET({ params }: { params: { id: string } }) {
+  try {
+    const user = await currentUser();
+
+    if (!user) {
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { id } = params;
+
+    if (!id) {
+      return NextResponse.json(
+        { message: 'Classroom ID is required' },
+        { status: 400 },
+      );
+    }
+
+    const findClassroom = await db.room.findUnique({
+      where: {
+        id: String(id),
+      },
+    });
+
+    if (!findClassroom) {
+      return NextResponse.json(
+        { message: 'Classroom not found' },
+        { status: 404 },
+      );
+    }
+
+    return NextResponse.json({
+      message: 'Classroom found',
+      data: findClassroom,
+    });
+  } catch (error: any) {
+    console.error(error.message);
+    return NextResponse.json(
+      { message: 'Internal server error' },
+      { status: 500 },
+    );
+  }
+}
