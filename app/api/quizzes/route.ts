@@ -89,7 +89,7 @@ export async function GET() {
       );
     }
 
-    return NextResponse.json({ data: quizzes }, { status: 200 });
+    return NextResponse.json(quizzes, { status: 200 });
   } catch (error: any) {
     console.error(error.message);
     return NextResponse.json(
