@@ -1,25 +1,35 @@
-import * as z from 'zod';
-import { UserType, RoomRole } from '@prisma/client';
+import * as z from "zod";
+import { UserType, RoomRole } from "@prisma/client";
 
 export const UserTypeSchema = z.object({
   type: z.enum([UserType.ADMIN, UserType.TEACHER, UserType.STUDENT], {
-    required_error: 'You need to select a user type.',
+    required_error: "You need to select a user type.",
   }),
+});
+
+export const RoomSchema = z.object({
+  name: z.string().min(5, { message: "Name too short" }),
+  description: z.string().min(20, { message: "Description too short" }),
+});
+
+export const addUserToRoomSchema = z.object({
+  userId: z.string().min(5, { message: "Id too short" }),
+  roomId: z.string().min(5, { message: "Id too short" }),
 });
 
 export const classroomQuerySchema = z.object({
   roomMemberId: z.string().optional(),
-  classroomId: z.string().nonempty('ID is required'),
+  classroomId: z.string().nonempty("ID is required"),
 });
 
 export const querySchema = z.object({
-  id: z.string().nonempty('ID is required'),
+  id: z.string().nonempty("ID is required"),
 });
 
 export const reqClassroomMembersBodySchema = z.object({
-  userId: z.string().nonempty('User ID is required'),
+  userId: z.string().nonempty("User ID is required"),
   role: z.enum([RoomRole.ADMIN, RoomRole.MODERATORS, RoomRole.GUEST], {
-    required_error: 'Role is required',
+    required_error: "Role is required",
   }),
 });
 

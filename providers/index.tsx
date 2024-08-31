@@ -18,7 +18,7 @@ const GlobalProvider = ({ children }: { children: ReactNode }) => {
 
   if (!mounted)
     return (
-      <div className="bg h-screen flex justify-center items-center  bg-primary">
+      <div className="bg h-screen flex justify-center items-center">
         <Loading />
       </div>
     );

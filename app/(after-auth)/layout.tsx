@@ -4,7 +4,7 @@ import React, { ReactNode } from "react";
 const AfterAuthLayout = ({ children }: { children: ReactNode }) => {
   return (
     <GlobalProvider>
-      <div>{children}</div>;
+      <div>{children}</div>
     </GlobalProvider>
   );
 };
