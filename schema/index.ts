@@ -50,3 +50,20 @@ export const putUserRequestBodySchema = z.object({
   profilePicture: z.string().optional(),
   classroomId: z.array(z.string()).optional(),
 });
+
+export const reqBodyQuizSchema = z.object({
+  title: z.string().nonempty('Title is required'),
+  description: z.string().nonempty('Description is required'),
+  topicId: z.string().nonempty('Topic ID is required'),
+  questions: z
+    .object(
+      {
+        question: z.string().nonempty('Question is required'),
+        options: z.array(z.string()).nonempty('Options are required'),
+        answer: z.string().nonempty('Answer is required'),
+        ansDesc: z.string().optional(),
+      },
+      { required_error: 'Questions are required' },
+    )
+    .required(),
+});

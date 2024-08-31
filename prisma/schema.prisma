@@ -70,29 +70,31 @@ model Topic {
 // // Quiz model
 // // This model refers to the quiz of a topic
 model Quiz {
-  id        String     @id @default(auto()) @map("_id") @db.ObjectId
-  title     String     @unique
-  topicId   String?    @db.ObjectId // modified to optional to test the route
-  topic     Topic?     @relation(fields: [topicId], references: [id], onDelete: Cascade)
-  questions Question[]
-  attempts  Attempt[]
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  id          String     @id @default(auto()) @map("_id") @db.ObjectId
+  title       String     @unique
+  description String?
+  createdBy   String     @db.ObjectId
+  topicId     String     @db.ObjectId // modified to optional to test the route
+  topic       Topic      @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  questions   Question[]
+  attempts    Attempt[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
 }
 
 // // Question model
 // // This model refers to the question of a quiz
 model Question {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  question    String
-  options     String[]
-  answer      String
-  description String
-  quizId      String   @db.ObjectId
-  quiz        Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  attemptId   String?  @db.ObjectId
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  question  String
+  options   String[]
+  answer    String
+  ansDesc   String?
+  quizId    String   @db.ObjectId
+  quiz      Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  attemptId String?  @db.ObjectId
 }
 
 // // Attempt model
