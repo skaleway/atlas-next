@@ -1,18 +1,64 @@
-import { NextResponse } from "next/server";
-import { getAuth } from "@clerk/nextjs/server";
+import { NextRequest, NextResponse } from "next/server";
+import { currentUser } from "@clerk/nextjs/server";
 import { db } from "@/lib/db";
+import { putUserRequestBodySchema, querySchema } from "@/schema";
 
-import { NextApiRequest } from "next";
-
-export async function PUT(req: NextApiRequest) {
+export async function GET(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
   try {
-    const { userId } = getAuth(req);
-    if (!userId) {
+    const user = await db.user.findUnique({
+      where: {
+        id: params.id,
+      },
+    });
+
+    if (!user) {
+      return NextResponse.json({ message: "User not found" }, { status: 404 });
+    }
+
+    return NextResponse.json({ data: user }, { status: 200 });
+  } catch (error: any) {
+    console.error(error.message);
+    return NextResponse.json(
+      { message: "Internal server error" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PUT(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const user = await currentUser();
+    if (!user) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    const { id } = req.query;
-    const { classroomId, ...values } = req.body;
+    const { id } = params;
+    const body = await req.json();
+
+    const queryValidation = querySchema.safeParse(params);
+
+    if (!queryValidation.success) {
+      return NextResponse.json(
+        { message: queryValidation.error.errors[0].message },
+        { status: 400 }
+      );
+    }
+
+    const bodyValidation = putUserRequestBodySchema.safeParse(body);
+    if (!bodyValidation.success) {
+      return NextResponse.json(
+        { message: "Invalid request body" },
+        { status: 400 }
+      );
+    }
+
+    const { classroomId, ...values } = body;
 
     if (!id) {
       return NextResponse.json(
@@ -67,15 +113,6 @@ export async function PUT(req: NextApiRequest) {
 
     // Prevent updating restricted fields
     if (values) {
-      if (values["clerkId"]) {
-        return NextResponse.json(
-          {
-            message: "clerkId cannot be updated. Please try again",
-          },
-          { status: 400 }
-        );
-      }
-
       const updateFields = [
         "username",
         "firstname",
@@ -120,14 +157,17 @@ export async function PUT(req: NextApiRequest) {
   }
 }
 
-export async function DELETE(req: NextApiRequest) {
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
   try {
-    const { userId } = getAuth(req);
-    if (!userId) {
+    const user = currentUser();
+    if (!user) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    const { id } = req.query;
+    const { id } = params;
 
     if (!id) {
       return NextResponse.json(
