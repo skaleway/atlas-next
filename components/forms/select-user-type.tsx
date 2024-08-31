@@ -9,9 +9,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import { UserTypeSchema } from "@/schema";
 import { cn } from "@/lib/utils";
+import { updateUserType } from "@/actions/user";
+import { toast } from "sonner";
 
 const SelectUserType = () => {
-  const [active, setActive] = useState(0);
+  const [active, setActive] = useState(-1);
   const router = useRouter();
 
   const form = useForm<z.infer<typeof UserTypeSchema>>({
@@ -23,15 +25,19 @@ const SelectUserType = () => {
 
   async function onSubmit(values: z.infer<typeof UserTypeSchema>) {
     try {
-      if (values.type === "STUDENT") {
-        await router.push("/dashboard/student");
+      const updatedUser = await updateUserType(values.type);
+      if (updatedUser.message === "Unathorized") {
+        toast.error("Unauthorized Access");
       }
+      toast.success(updatedUser.message);
 
-      if (values.type === "TEACHER") {
-        await router.push("/dashboard/teacher");
-      }
+      router.refresh();
     } catch (error: any) {}
   }
+
+  const {
+    formState: { isSubmitting },
+  } = form;
 
   const types = [UserType.STUDENT, UserType.TEACHER];
 
@@ -49,7 +55,7 @@ const SelectUserType = () => {
 
         <div className="flex gap-10">
           {types.map((item, index) => (
-            <div
+            <button
               key={index}
               onClick={() => {
                 setActive(index);
@@ -57,11 +63,15 @@ const SelectUserType = () => {
               }}
               className={cn(
                 "border-2 border-border p-5 flex-1 cursor-pointer transition-all duration-300 rounded-2xl",
-                active === index && "border-primary text-primary"
+                active === index && "border-primary text-primary",
+                {
+                  "opacity-50 cursor-not-allowed": active >= 0,
+                }
               )}
+              disabled={active >= 0 || isSubmitting}
             >
               {item === "STUDENT" ? "Student" : "Teacher"}
-            </div>
+            </button>
           ))}
         </div>
       </div>

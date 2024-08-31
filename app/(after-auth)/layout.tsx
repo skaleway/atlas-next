@@ -1,7 +1,12 @@
+import GlobalProvider from "@/providers";
 import React, { ReactNode } from "react";
 
 const AfterAuthLayout = ({ children }: { children: ReactNode }) => {
-  return <div>{children}</div>;
+  return (
+    <GlobalProvider>
+      <div>{children}</div>;
+    </GlobalProvider>
+  );
 };
 
 export default AfterAuthLayout;
