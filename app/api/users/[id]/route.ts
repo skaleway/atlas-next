@@ -1,11 +1,11 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { currentUser } from '@clerk/nextjs/server';
-import { db } from '@/lib/db';
-import { putUserRequestBodySchema, querySchema } from '@/schema';
+import { NextRequest, NextResponse } from "next/server";
+import { currentUser } from "@clerk/nextjs/server";
+import { db } from "@/lib/db";
+import { putUserRequestBodySchema, querySchema } from "@/schema";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: { id: string } }
 ) {
   try {
     const user = await db.user.findUnique({
@@ -15,27 +15,27 @@ export async function GET(
     });
 
     if (!user) {
-      return NextResponse.json({ message: 'User not found' }, { status: 404 });
+      return NextResponse.json({ message: "User not found" }, { status: 404 });
     }
 
     return NextResponse.json({ data: user }, { status: 200 });
   } catch (error: any) {
     console.error(error.message);
     return NextResponse.json(
-      { message: 'Internal server error' },
-      { status: 500 },
+      { message: "Internal server error" },
+      { status: 500 }
     );
   }
 }
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: { id: string } }
 ) {
   try {
     const user = await currentUser();
     if (!user) {
-      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
     const { id } = params;
@@ -46,15 +46,15 @@ export async function PUT(
     if (!queryValidation.success) {
       return NextResponse.json(
         { message: queryValidation.error.errors[0].message },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
     const bodyValidation = putUserRequestBodySchema.safeParse(body);
     if (!bodyValidation.success) {
       return NextResponse.json(
-        { message: 'Invalid request body' },
-        { status: 400 },
+        { message: "Invalid request body" },
+        { status: 400 }
       );
     }
 
@@ -62,15 +62,15 @@ export async function PUT(
 
     if (!id) {
       return NextResponse.json(
-        { message: 'User ID is required' },
-        { status: 400 },
+        { message: "User ID is required" },
+        { status: 400 }
       );
     }
 
     if (!values && !classroomId) {
       return NextResponse.json(
-        { message: 'Values are required' },
-        { status: 400 },
+        { message: "Values are required" },
+        { status: 400 }
       );
     }
 
@@ -81,7 +81,7 @@ export async function PUT(
     });
 
     if (!findUser) {
-      return NextResponse.json({ message: 'User not found' }, { status: 404 });
+      return NextResponse.json({ message: "User not found" }, { status: 404 });
     }
 
     let userClassrooms = [...(findUser.classroomId || [])];
@@ -96,14 +96,14 @@ export async function PUT(
             userClassrooms.push(classroomId[i]);
           } else {
             return NextResponse.json(
-              { message: 'Classroom not found' },
-              { status: 404 },
+              { message: "Classroom not found" },
+              { status: 404 }
             );
           }
         } else {
           return NextResponse.json(
-            { message: 'User already in this class' },
-            { status: 400 },
+            { message: "User already in this class" },
+            { status: 400 }
           );
         }
       }
@@ -114,13 +114,13 @@ export async function PUT(
     // Prevent updating restricted fields
     if (values) {
       const updateFields = [
-        'username',
-        'firstname',
-        'secondname',
-        'email',
-        'age',
-        'usertype',
-        'profilePicture',
+        "username",
+        "firstname",
+        "secondname",
+        "email",
+        "age",
+        "usertype",
+        "profilePicture",
       ];
       updateFields.forEach((field) => {
         if (
@@ -139,40 +139,40 @@ export async function PUT(
 
     if (!updatedUser) {
       return NextResponse.json(
-        { message: 'User not updated' },
-        { status: 400 },
+        { message: "User not updated" },
+        { status: 400 }
       );
     }
 
     return NextResponse.json(
-      { message: 'User updated successfully', data: updatedUser },
-      { status: 200 },
+      { message: "User updated successfully", data: updatedUser },
+      { status: 200 }
     );
   } catch (error: any) {
     console.error(error.message);
     return NextResponse.json(
-      { message: 'Internal server error' },
-      { status: 500 },
+      { message: "Internal server error" },
+      { status: 500 }
     );
   }
 }
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: { id: string } }
 ) {
   try {
     const user = currentUser();
     if (!user) {
-      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
     const { id } = params;
 
     if (!id) {
       return NextResponse.json(
-        { message: 'User ID is required' },
-        { status: 400 },
+        { message: "User ID is required" },
+        { status: 400 }
       );
     }
 
@@ -183,7 +183,7 @@ export async function DELETE(
     });
 
     if (!findUser) {
-      return NextResponse.json({ message: 'User not found' }, { status: 404 });
+      return NextResponse.json({ message: "User not found" }, { status: 404 });
     }
 
     const deletedUser = await db.user.delete({
@@ -192,20 +192,20 @@ export async function DELETE(
 
     if (!deletedUser) {
       return NextResponse.json(
-        { message: 'User not deleted' },
-        { status: 400 },
+        { message: "User not deleted" },
+        { status: 400 }
       );
     }
 
     return NextResponse.json(
-      { message: 'User deleted successfully', data: deletedUser },
-      { status: 200 },
+      { message: "User deleted successfully", data: deletedUser },
+      { status: 200 }
     );
   } catch (error: any) {
     console.error(error.message);
     return NextResponse.json(
-      { message: 'Internal server error' },
-      { status: 500 },
+      { message: "Internal server error" },
+      { status: 500 }
     );
   }
 }
