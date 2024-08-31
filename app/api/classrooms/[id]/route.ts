@@ -4,8 +4,8 @@ import { currentUser } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 export async function PUT(
-  { params }: { params: { id: string } },
-  req: Request
+  req: Request,
+  { params }: { params: { id: string } }
 ) {
   try {
     const user = await currentUser();
