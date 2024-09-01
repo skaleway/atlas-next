@@ -10,7 +10,7 @@ export async function GET(req:Request){
       return new NextResponse("Something happened while getting users", {status:404
       })
     }
-    
+    return new NextResponse(JSON.stringify(users), {status:200})
   } catch (error:any) {
 
     console.log(error.message)
