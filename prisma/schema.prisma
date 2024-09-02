@@ -27,19 +27,19 @@ enum TopicContentType {
 // Student and Admin model
 // a student can be in many classrooms
 model User {
-  id             String    @id @default(auto()) @map("_id") @db.ObjectId
-  username       String    @unique
+  id             String       @id @default(auto()) @map("_id") @db.ObjectId
+  username       String       @unique
   firstname      String?
   secondname     String?
   age            Int?
-  email          String    @unique
-  classroomId    String[]  @db.ObjectId // will be empty for admin
-  usertype       UserType  @default(STUDENT)
-  selected       Boolean   @default(false)
+  email          String       @unique
+  usertype       UserType     @default(STUDENT)
+  selected       Boolean      @default(false)
   profilePicture String?
-  clerkId        String    @unique
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+  clerkId        String       @unique
+  roomMember     RoomMember[]
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
   Attempt        Attempt[]
 }
 
@@ -132,4 +132,5 @@ model RoomMember {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   Room      Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  User      User     @relation(fields: [userId], references: [id])
 }
