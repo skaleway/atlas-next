@@ -35,7 +35,9 @@ export const putUserRequestBodySchema = z.object({
   email: z.string().email().optional(),
   age: z.number().optional(),
   usertype: z
-    .enum([RoomRole.ADMIN, RoomRole.MODERATORS, RoomRole.GUEST])
+    .enum([UserType.ADMIN, UserType.TEACHER, UserType.STUDENT], {
+      required_error: 'User type is required',
+    })
     .optional(),
   profilePicture: z.string().optional(),
   classroomId: z.array(z.string()).optional(),
