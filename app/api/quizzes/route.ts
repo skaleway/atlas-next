@@ -3,6 +3,7 @@ import { db } from '@/lib/db';
 import { currentUser } from '@clerk/nextjs/server';
 import { reqBodyQuizSchema } from '@/schema';
 
+// Create quiz
 export async function POST(req: NextRequest) {
   try {
     const user = await currentUser();
@@ -78,6 +79,7 @@ export async function POST(req: NextRequest) {
   }
 }
 
+// Get all quizzes
 export async function GET() {
   try {
     const quizzes = await db.quiz.findMany();
