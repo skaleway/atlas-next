@@ -74,3 +74,9 @@ export const reqBodyQuestionSchema = z.object({
   answer: z.string().nonempty('Question Correct answer required'),
   ansDesc: z.string().optional(),
 });
+
+// question params zod schema
+export const questionQuerySchema = z.object({
+  quizId: z.string().nonempty('Quiz Id must be provided in params.'),
+  questionId: z.string().nonempty('Question Id must be provided.'),
+});
