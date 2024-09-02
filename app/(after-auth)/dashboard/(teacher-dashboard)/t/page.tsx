@@ -1,4 +1,6 @@
+import { findUserOneRoom } from "@/actions/room";
 import { useUser } from "@/hooks/use-user";
+import { db } from "@/lib/db";
 import { redirect } from "next/navigation";
 import React from "react";
 
@@ -12,6 +14,10 @@ const TeacherDashboard = async () => {
   if (!user.selected) {
     return redirect("/onboarding");
   }
+
+  const teacherRoom = await findUserOneRoom(user.id);
+
+  if (!teacherRoom.room) return redirect("/dashboard/t/create-room");
 
   return <div>TeacherDashboard</div>;
 };

@@ -15,7 +15,8 @@ const OnBoarding = async () => {
 
   if (user.selected) {
     if (user.usertype === "STUDENT") return redirect("/dashboard/s");
-    if (user.usertype === "TEACHER") return redirect("/dashboard/t");
+    if (user.usertype === "TEACHER")
+      return redirect("/dashboard/t/create-room");
   }
 
   return (

@@ -1,12 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 
-export async function GET() {
+
+export async function GET(req:Request){
   try {
-    const user = await db.user.findMany();
-    return NextResponse.json(user);
-  } catch (error: any) {
-    console.error(error.message);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    const users = await db.user.findMany()
+
+    if(!users){
+      return new NextResponse("Something happened while getting users", {status:404
+      })
+    }
+    return new NextResponse(JSON.stringify(users), {status:200})
+  } catch (error:any) {
+
+    console.log(error.message)
+return new NextResponse("Internal server error", {status:500})    
   }
 }
