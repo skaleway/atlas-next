@@ -2,7 +2,7 @@
 
 import { useUser } from "@/hooks/use-user";
 import { db } from "@/lib/db";
-import { RoomSchema } from "@/schema";
+import { addUserToRoomSchema, RoomSchema } from "@/schema";
 import { addUserToRoomType, RoomSchemaType } from "@/types";
 
 export async function createRoom(data: RoomSchemaType) {
@@ -85,6 +85,7 @@ export async function findRoomById(roomId: string) {
       where: { id: roomId },
       include: {
         members: true,
+        quizes: true,
       },
     });
 
@@ -109,6 +110,13 @@ export async function addUserToRoom(data: addUserToRoomType) {
     if (!user)
       return {
         message: "Unauthorized",
+      };
+
+    const validData = addUserToRoomSchema.safeParse(data);
+
+    if (!validData.success)
+      return {
+        message: "Invalid request body",
       };
 
     const room = await findRoomById(data.roomId);
@@ -138,8 +146,36 @@ export async function addUserToRoom(data: addUserToRoomType) {
 
     return {
       message: "User added successfully",
+      room,
     };
   } catch (error: any) {
     console.log("ERROR_ADDING_USER_TO_ROOM");
+  }
+}
+
+export async function findUsersCreatedRoom(userId: string) {
+  try {
+    const rooms = await db.room.findMany({
+      where: {
+        creatorId: userId,
+      },
+      include: {
+        members: true,
+      },
+    });
+
+    if (!rooms) {
+      return {
+        message: "No rooms found",
+        rooms: [],
+      };
+    }
+
+    return {
+      message: "Rooms found",
+      rooms,
+    };
+  } catch (error: any) {
+    console.log("ERROR_FINDING_USERS_CREATED_ROOM");
   }
 }
