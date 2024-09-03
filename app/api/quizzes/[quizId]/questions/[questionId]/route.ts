@@ -154,3 +154,76 @@ export async function PUT(
     );
   }
 }
+
+// delete a question by quiz id and question id
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: { quizId: string; questionId: string } },
+) {
+  try {
+    const user = await currentUser();
+
+    if (!user) {
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    }
+
+    const findUser = await db.user.findUnique({
+      where: {
+        id: user.id,
+      },
+    });
+
+    if (!findUser) {
+      return NextResponse.json({ message: 'User not found.' }, { status: 404 });
+    }
+
+    if (findUser.usertype !== 'ADMIN' && findUser.usertype !== 'TEACHER') {
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    }
+
+    const validateParams = questionQuerySchema.safeParse(params);
+
+    if (!validateParams.success) {
+      return NextResponse.json(
+        { message: validateParams.error.message },
+        { status: 400 },
+      );
+    }
+
+    const question = await db.question.findFirst({
+      where: {
+        id: params.questionId,
+        quizId: params.quizId,
+      },
+    });
+
+    if (!question) {
+      return NextResponse.json(
+        { message: 'Question not found.' },
+        { status: 404 },
+      );
+    }
+
+    const deletedQuestion = await db.question.delete({
+      where: {
+        id: params.questionId,
+        quizId: params.quizId,
+      },
+    });
+
+    if (!deletedQuestion) {
+      return NextResponse.json(
+        { message: 'Question not deleted.' },
+        { status: 500 },
+      );
+    }
+
+    return NextResponse.json(deletedQuestion, { status: 200 });
+  } catch (error: any) {
+    console.error(error.message);
+    return NextResponse.json(
+      { message: 'Internal server error.' },
+      { status: 500 },
+    );
+  }
+}
