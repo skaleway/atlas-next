@@ -19,6 +19,15 @@ enum RoomRole {
   MODERATORS
 }
 
+enum Grade {
+  A
+  B
+  C
+  D
+  F
+  U
+}
+
 enum TopicContentType {
   PDF
   VIDEO
@@ -74,11 +83,13 @@ model Quiz {
   description String?
   createdBy   String     @db.ObjectId
   topicId     String     @db.ObjectId // modified to optional to test the route
-  topic       Topic      @relation(fields: [topicId], references: [id], onDelete: Cascade)
-  questions   Question[]
-  attempts    Attempt[]
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
+  roomId      String     @db.ObjectId
+  topic       Topic      @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  Room        Room       @relation(fields: [roomId], references: [id])
+  questions   Question[]
+  attempts    Attempt[]
 }
 
 // // Question model
@@ -101,7 +112,7 @@ model Question {
 model Attempt {
   id              String            @id @default(auto()) @map("_id") @db.ObjectId
   score           Int
-  answers         String[]
+  grade           Grade             @default(U)
   quizId          String            @db.ObjectId
   studentId       String            @db.ObjectId
   createdAt       DateTime          @default(now())
@@ -132,6 +143,7 @@ model Room {
   updatedAt   DateTime     @updatedAt
   members     RoomMember[]
   topics      Topic[]
+  quizzes     Quiz[]
 }
 
 // Members of a classroom (subject)
