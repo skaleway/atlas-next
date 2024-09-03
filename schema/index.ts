@@ -1,42 +1,39 @@
-import * as z from "zod";
-import { UserType, RoomRole } from "@prisma/client";
+import * as z from 'zod';
+import { UserType, RoomRole } from '@prisma/client';
 
 // user type zod schema
 export const UserTypeSchema = z.object({
   type: z.enum([UserType.ADMIN, UserType.TEACHER, UserType.STUDENT], {
-    required_error: "You need to select a user type.",
+    required_error: 'You need to select a user type.',
   }),
 });
 
-
 // classrooom params zod schema
-
 export const RoomSchema = z.object({
-  name: z.string().min(5, { message: "Name too short" }),
-  description: z.string().min(20, { message: "Description too short" }),
+  name: z.string().min(5, { message: 'Name too short' }),
+  description: z.string().min(20, { message: 'Description too short' }),
 });
 
 export const addUserToRoomSchema = z.object({
-  userId: z.string().min(5, { message: "Id too short" }),
-  roomId: z.string().min(5, { message: "Id too short" }),
+  userId: z.string().min(5, { message: 'Id too short' }),
+  roomId: z.string().min(5, { message: 'Id too short' }),
 });
-
 
 export const classroomQuerySchema = z.object({
   roomMemberId: z.string().optional(),
-  classroomId: z.string().nonempty("ID is required"),
+  classroomId: z.string().nonempty('ID is required'),
 });
 
 // user params zod schema
 export const querySchema = z.object({
-  id: z.string().nonempty("ID is required"),
+  id: z.string().nonempty('ID is required'),
 });
 
 // class room member body request zod schema
 export const reqClassroomMembersBodySchema = z.object({
-  userId: z.string().nonempty("User ID is required"),
+  userId: z.string().nonempty('User ID is required'),
   role: z.enum([RoomRole.ADMIN, RoomRole.MODERATORS, RoomRole.GUEST], {
-    required_error: "Role is required",
+    required_error: 'Role is required',
   }),
 });
 
@@ -92,4 +89,12 @@ export const reqBodyQuestionSchema = z.object({
 export const questionQuerySchema = z.object({
   quizId: z.string().nonempty('Quiz Id must be provided in params.'),
   questionId: z.string().nonempty('Question Id must be provided.'),
+});
+
+// question put request body zod schema
+export const putReqBodyQuestionSchema = z.object({
+  question: z.string().optional(),
+  options: z.array(z.string()).optional(),
+  answer: z.string().optional(),
+  ansDesc: z.string().optional(),
 });

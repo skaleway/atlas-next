@@ -37,9 +37,9 @@ model User {
   selected       Boolean      @default(false)
   profilePicture String?
   clerkId        String       @unique
-  roomMember     RoomMember[]
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
+  roomMember     RoomMember[]
   Attempt        Attempt[]
 }
 
@@ -58,13 +58,12 @@ model TopicContent {
 model Topic {
   id           String         @id @default(auto()) @map("_id") @db.ObjectId
   name         String         @unique
-  classRoomId  String         @db.ObjectId
+  roomId       String         @db.ObjectId
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
   TopicContent TopicContent[]
-  Room         Room?          @relation(fields: [roomId], references: [id], onDelete: Cascade)
-  roomId       String?        @db.ObjectId
   Quiz         Quiz[]
+  Room         Room           @relation(fields: [roomId], references: [id], onDelete: Cascade)
 }
 
 // // Quiz model
@@ -85,30 +84,42 @@ model Quiz {
 // // Question model
 // // This model refers to the question of a quiz
 model Question {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  question  String
-  options   String[]
-  answer    String
-  ansDesc   String?
-  quizId    String   @db.ObjectId
-  quiz      Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  attemptId String?  @db.ObjectId
+  id              String            @id @default(auto()) @map("_id") @db.ObjectId
+  question        String
+  options         String[]
+  answer          String
+  ansDesc         String?
+  quizId          String            @db.ObjectId
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  quiz            Quiz              @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  AttemptQuestion AttemptQuestion[]
 }
 
 // // Attempt model
 // This model refers to the attempt of a student on a quiz
 model Attempt {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  score     Int
-  quizId    String   @db.ObjectId
-  quiz      Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
-  answers   String[]
-  studentId String   @db.ObjectId
-  student   User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id              String            @id @default(auto()) @map("_id") @db.ObjectId
+  score           Int
+  answers         String[]
+  quizId          String            @db.ObjectId
+  studentId       String            @db.ObjectId
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  quiz            Quiz              @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  student         User              @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  AttemptQuestion AttemptQuestion[]
+}
+
+model AttemptQuestion {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  attemptId  String   @db.ObjectId
+  questionId String   @db.ObjectId
+  answer     String
+  attempt    Attempt  @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
 
 // class room model
