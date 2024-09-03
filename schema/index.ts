@@ -9,7 +9,6 @@ export const UserTypeSchema = z.object({
 });
 
 // classrooom params zod schema
-
 export const RoomSchema = z.object({
   name: z.string().min(5, { message: 'Name too short' }),
   description: z.string().min(20, { message: 'Description too short' }),
