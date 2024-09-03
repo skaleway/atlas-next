@@ -5,12 +5,20 @@ import { NextRequest, NextResponse } from 'next/server';
 // Get quiz by id
 export async function GET(
   req: NextRequest,
-  { params }: { params: { quizId: string } },
+  { params }: { params: { quizId: string; classroomId: string } },
 ) {
   try {
+    if (!(await db.room.findUnique({ where: { id: params.classroomId } }))) {
+      return NextResponse.json(
+        { message: 'Classroom not found' },
+        { status: 404 },
+      );
+    }
+
     const quiz = await db.quiz.findUnique({
       where: {
         id: params.quizId,
+        roomId: params.classroomId,
       },
     });
 
@@ -31,9 +39,16 @@ export async function GET(
 // Delete quiz by id
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { quizId: string } },
+  { params }: { params: { quizId: string; classroomId: string } },
 ) {
   try {
+    if (!params.quizId || !params.classroomId) {
+      return NextResponse.json(
+        { message: 'Provide correct params' },
+        { status: 400 },
+      );
+    }
+
     const user = await currentUser();
 
     if (!user) {
@@ -54,9 +69,17 @@ export async function DELETE(
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
 
+    if (!(await db.room.findUnique({ where: { id: params.classroomId } }))) {
+      return NextResponse.json(
+        { message: 'Classroom not found' },
+        { status: 404 },
+      );
+    }
+
     const quiz = await db.quiz.findUnique({
       where: {
         id: params.quizId,
+        roomId: params.classroomId,
       },
     });
 
@@ -67,6 +90,7 @@ export async function DELETE(
     await db.quiz.delete({
       where: {
         id: params.quizId,
+        roomId: params.classroomId,
       },
     });
 
@@ -83,9 +107,23 @@ export async function DELETE(
 // Update quiz by id
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { quizId: string } },
+  { params }: { params: { quizId: string; classroomId: string } },
 ) {
   try {
+    if (!params.quizId || !params.classroomId) {
+      return NextResponse.json(
+        { message: 'Provide correct params' },
+        { status: 400 },
+      );
+    }
+
+    if (!(await db.room.findUnique({ where: { id: params.classroomId } }))) {
+      return NextResponse.json(
+        { message: 'Classroom not found' },
+        { status: 404 },
+      );
+    }
+
     const user = await currentUser();
 
     if (!user) {
@@ -109,6 +147,7 @@ export async function PUT(
     const quiz = await db.quiz.findUnique({
       where: {
         id: params.quizId,
+        roomId: params.classroomId,
       },
     });
 
