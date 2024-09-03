@@ -69,4 +69,8 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  .remaining-height {
+    height: calc(100vh - 54px);
+  }
 }
