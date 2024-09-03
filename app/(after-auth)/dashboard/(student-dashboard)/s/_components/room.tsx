@@ -19,6 +19,7 @@ import { addUserToRoom } from "@/actions/room";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 
 interface RoomProps {
   room: Rooms & { members: RoomMember[] };
@@ -46,6 +47,8 @@ const Room = ({ room, userId }: RoomProps) => {
     } catch (error) {}
   }
 
+  const userInRoom = room.members.some((member) => member.userId === userId);
+
   return (
     <Card key={room.id}>
       <CardHeader>
@@ -53,16 +56,21 @@ const Room = ({ room, userId }: RoomProps) => {
         <CardDescription>{room.description}</CardDescription>
       </CardHeader>
       <CardContent className="flex items-center justify-between">
-        <div className="bg-muted h-5 px-2 rounded w-full flex items-center justify-center border border-border">
-          <span className="text-xs">{room.members.length} Enrolled</span>
+        <div className="bg-muted h-5 px-2 rounded w-fit flex items-center justify-center border border-border">
+          <span className="text-xs">
+            {userInRoom
+              ? `You + ${room.members.length > 0 ? room.members.length - 1 : 0}`
+              : room.members.length}{" "}
+            Enrolled
+          </span>
         </div>
-        {userId === room.creatorId ||
-        room.members.some((member) => member.userId === userId) ? (
+        {userId === room.creatorId || userInRoom ? (
           <Link
-            className={buttonVariants({ variant: "outline" })}
+            className={buttonVariants({ variant: "outline", size: "sm" })}
             href={`/rooms/${room.id}`}
           >
-            View room
+            <span>View room</span>
+            <ArrowRight className="size-4 ml-2" />
           </Link>
         ) : (
           <Button

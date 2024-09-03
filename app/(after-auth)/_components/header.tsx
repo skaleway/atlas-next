@@ -1,22 +1,21 @@
-import { Button } from "@/components/ui/button";
 import { UserButton } from "@clerk/nextjs";
-import { Room, RoomMember } from "@prisma/client";
-import { Plus } from "lucide-react";
-import React from "react";
+import { Room, RoomMember, User } from "@prisma/client";
+import CreateQuiz from "./create-quiz";
 
 interface RoomHeaderProps {
   room: Room & { members: RoomMember[] };
+  user: User;
 }
 
-const RoomHeader = ({ room }: RoomHeaderProps) => {
+const RoomHeader = ({ room, user }: RoomHeaderProps) => {
+  const creator = room.creatorId === user.id;
+
   return (
     <div className="flex h-14 bg-background items-center px-5 border-b justify-between">
       <h1 className="text-xl font-semibold text-gray-800">{room.name}</h1>
       <div className="flex items-center gap-2">
         <UserButton />
-        <Button size="icon" className="min-w-10">
-          <Plus className="size-4" />
-        </Button>
+        {creator && <CreateQuiz roomId={room.id} />}
       </div>
     </div>
   );
