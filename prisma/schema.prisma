@@ -82,14 +82,15 @@ model Quiz {
   title       String     @unique
   description String?
   createdBy   String     @db.ObjectId
-  topicId     String     @db.ObjectId // modified to optional to test the route
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-  roomId      String     @db.ObjectId
-  topic       Topic      @relation(fields: [topicId], references: [id], onDelete: Cascade)
-  Room        Room       @relation(fields: [roomId], references: [id])
+  topicId     String?     @db.ObjectId // modified to optional to test the route
+  topic       Topic?     @relation(fields: [topicId], references: [id], onDelete: Cascade)
   questions   Question[]
   attempts    Attempt[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  Room        Room?      @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  roomId      String?    @db.ObjectId
+
 }
 
 // // Question model
