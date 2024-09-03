@@ -4,11 +4,21 @@ import { currentUser } from '@clerk/nextjs/server';
 import { reqBodyQuizSchema } from '@/schema';
 
 // Create quiz
-export async function POST(req: NextRequest) {
+export async function POST(
+  req: NextRequest,
+  { params }: { params: { classroomId: string } },
+) {
   try {
     const user = await currentUser();
     if (!user) {
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    }
+
+    if (!(await db.room.findUnique({ where: { id: params.classroomId } }))) {
+      return NextResponse.json(
+        { message: 'Classroom not found' },
+        { status: 404 },
+      );
     }
 
     const body = await req.json();
@@ -62,6 +72,7 @@ export async function POST(req: NextRequest) {
         title: body.title,
         description: body.description,
         topicId: body.topicId,
+        roomId: params.classroomId,
         questions: {
           create: body.questions,
         },
@@ -80,9 +91,21 @@ export async function POST(req: NextRequest) {
 }
 
 // Get all quizzes
-export async function GET() {
+export async function GET(
+  req: NextRequest,
+  { params }: { params: { classroomId: string } },
+) {
   try {
-    const quizzes = await db.quiz.findMany();
+    if (!(await db.room.findUnique({ where: { id: params.classroomId } }))) {
+      return NextResponse.json(
+        { message: 'Classroom not found' },
+        { status: 404 },
+      );
+    }
+
+    const quizzes = await db.quiz.findMany({
+      where: { roomId: params.classroomId },
+    });
 
     if (!quizzes) {
       return NextResponse.json(
