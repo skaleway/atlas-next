@@ -98,3 +98,9 @@ export const putReqBodyQuestionSchema = z.object({
   answer: z.string().optional(),
   ansDesc: z.string().optional(),
 });
+
+// topic post request body zod schema
+export const reqBodyTopicSchema = z.object({
+  name: z.string().nonempty('Topic name is required'),
+  description: z.string().optional(),
+});
