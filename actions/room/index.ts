@@ -1,9 +1,9 @@
-"use server";
+'use server';
 
-import { useUser } from "@/hooks/use-user";
-import { db } from "@/lib/db";
-import { addUserToRoomSchema, RoomSchema } from "@/schema";
-import { addUserToRoomType, RoomSchemaType } from "@/types";
+import { useUser } from '@/hooks/use-user';
+import { db } from '@/lib/db';
+import { addUserToRoomSchema, RoomSchema } from '@/schema';
+import { addUserToRoomType, RoomSchemaType } from '@/types';
 
 export async function createRoom(data: RoomSchemaType) {
   try {
@@ -11,10 +11,10 @@ export async function createRoom(data: RoomSchemaType) {
 
     if (!user)
       return {
-        message: "Unauthorized",
+        message: 'Unauthorized',
       };
 
-    if (user.usertype !== "TEACHER")
+    if (user.usertype !== 'TEACHER')
       return {
         message: "You can't create a class as a student",
       };
@@ -23,7 +23,7 @@ export async function createRoom(data: RoomSchemaType) {
 
     if (!validData.success)
       return {
-        message: "Data provided not valid",
+        message: 'Data provided not valid',
       };
 
     const room = await db.room.create({
@@ -34,20 +34,20 @@ export async function createRoom(data: RoomSchemaType) {
         members: {
           create: {
             userId: user.id,
-            role: "ADMIN",
+            role: 'ADMIN',
           },
         },
       },
     });
 
     return {
-      message: "Room created successfully",
+      message: 'Room created successfully',
       room,
     };
   } catch (error: any) {
-    console.log("CREATING_ROOM", error.message);
+    console.log('CREATING_ROOM', error.message);
     return {
-      message: "Something happened when creating a room",
+      message: 'Something happened when creating a room',
     };
   }
 }
@@ -65,16 +65,16 @@ export async function findUserOneRoom(userId: string) {
       },
     });
 
-    if (!room) return { message: "Room not found" };
+    if (!room) return { message: 'Room not found' };
 
     return {
-      message: "Room found",
+      message: 'Room found',
       room,
     };
   } catch (error: any) {
-    console.log("FIND_USER_ONE_ROOM", error.message);
+    console.log('FIND_USER_ONE_ROOM', error.message);
     return {
-      message: "Something happened when finding a room",
+      message: 'Something happened when finding a room',
     };
   }
 }
@@ -89,16 +89,16 @@ export async function findRoomById(roomId: string) {
       },
     });
 
-    if (!room) return { message: "Room not found" };
+    if (!room) return { message: 'Room not found' };
 
     return {
-      message: "Room found",
+      message: 'Room found',
       room,
     };
   } catch (error: any) {
-    console.log("FIND_ROOM_BY_ID", error.message);
+    console.log('FIND_ROOM_BY_ID', error.message);
     return {
-      message: "Something happened when finding a room",
+      message: 'Something happened when finding a room',
     };
   }
 }
@@ -109,26 +109,26 @@ export async function addUserToRoom(data: addUserToRoomType) {
 
     if (!user)
       return {
-        message: "Unauthorized",
+        message: 'Unauthorized',
       };
 
     const validData = addUserToRoomSchema.safeParse(data);
 
     if (!validData.success)
       return {
-        message: "Invalid request body",
+        message: 'Invalid request body',
       };
 
     const room = await findRoomById(data.roomId);
 
     if (!room)
       return {
-        message: "Room not found",
+        message: 'Room not found',
       };
 
     if (room.room?.members.some((m) => m.userId === data.userId))
       return {
-        message: "User already in room",
+        message: 'User already in room',
       };
 
     await db.room.update({
@@ -145,11 +145,11 @@ export async function addUserToRoom(data: addUserToRoomType) {
     });
 
     return {
-      message: "User added successfully",
+      message: 'User added successfully',
       room,
     };
   } catch (error: any) {
-    console.log("ERROR_ADDING_USER_TO_ROOM");
+    console.log('ERROR_ADDING_USER_TO_ROOM');
   }
 }
 
@@ -166,16 +166,16 @@ export async function findUsersCreatedRoom(userId: string) {
 
     if (!rooms) {
       return {
-        message: "No rooms found",
+        message: 'No rooms found',
         rooms: [],
       };
     }
 
     return {
-      message: "Rooms found",
+      message: 'Rooms found',
       rooms,
     };
   } catch (error: any) {
-    console.log("ERROR_FINDING_USERS_CREATED_ROOM");
+    console.log('ERROR_FINDING_USERS_CREATED_ROOM');
   }
 }
