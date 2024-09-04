@@ -24,6 +24,7 @@ enum Grade {
   B
   C
   D
+  E
   F
   U
 }
