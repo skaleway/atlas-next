@@ -85,7 +85,7 @@ export async function findRoomById(roomId: string) {
       where: { id: roomId },
       include: {
         members: true,
-        quizes: true,
+        quizzes: true,
       },
     });
 

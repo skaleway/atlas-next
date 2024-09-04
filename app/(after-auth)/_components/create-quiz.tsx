@@ -32,7 +32,7 @@ import { cn } from "@/lib/utils";
 import { createQuizSchema } from "@/schema";
 import { QuizSchemaType } from "@/types";
 
-const CreateQuiz = ({roomId}: {roomId: string}) => {
+const CreateQuiz = ({ roomId }: { roomId: string }) => {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
 
@@ -46,8 +46,10 @@ const CreateQuiz = ({roomId}: {roomId: string}) => {
     try {
       const data = await createNewQuiz(values, roomId);
 
-      if (data) {
-        toast.success(`created`);
+      if (!data?.data) return new Error("Error");
+
+      if (data?.data) {
+        toast.success(`Something`);
         setIsOpen(false);
         form.reset();
       }

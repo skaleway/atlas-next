@@ -30,7 +30,7 @@ const RoomPage = async ({ params }: { params: { roomId: string } }) => {
     (member) => member.role === "GUEST"
   ).length;
 
-  const totalQuizes = room.quizes.length;
+  const totalQuizes = room.quizzes.length;
 
   const teacherCards: CardProps[] = [
     {
