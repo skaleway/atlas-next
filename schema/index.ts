@@ -35,7 +35,7 @@ export const createQuestionsSchema = z.object({
   options: z
     .array(z.string())
     .min(4, { message: "At least 4 options are required" }),
-  answer: z.string().min(10, { message: "Answer is too short" }),
+  answer: z.string().min(5, { message: "Answer is too short" }),
 });
 
 // user params zod schema
@@ -115,7 +115,7 @@ export const putReqBodyQuestionSchema = z.object({
 
 // topic post request body zod schema
 export const reqBodyTopicSchema = z.object({
-  name: z.string().nonempty('Topic name is required'),
+  name: z.string().nonempty("Topic name is required"),
   description: z.string().optional(),
 });
 
