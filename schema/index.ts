@@ -30,6 +30,14 @@ export const createQuizSchema = z.object({
   description: z.string().min(20, { message: "Description too short" }),
 });
 
+export const createQuestionsSchema = z.object({
+  question: z.string().min(10, { message: "Question is too short" }),
+  options: z
+    .array(z.string())
+    .min(4, { message: "At least 4 options are required" }),
+  answer: z.string().min(10, { message: "Answer is too short" }),
+});
+
 // user params zod schema
 export const querySchema = z.object({
   id: z.string().nonempty("ID is required"),

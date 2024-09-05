@@ -1,3 +1,9 @@
+import { Attempt, Quiz } from "@prisma/client";
+import { Book, GraduationCap, LucideIcon, Users } from "lucide-react";
+import { notFound } from "next/navigation";
+import Link from "next/link";
+import { buttonVariants } from "@/components/ui/button";
+
 import { findRoomById } from "@/actions/room";
 import {
   Card,
@@ -7,8 +13,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useUser } from "@/hooks/use-user";
-import { Book, GraduationCap, LucideIcon, Users } from "lucide-react";
-import { notFound } from "next/navigation";
+import { db } from "@/lib/db";
 
 interface CardProps {
   title: string;
@@ -67,11 +72,64 @@ const RoomPage = async ({ params }: { params: { roomId: string } }) => {
     },
   ];
 
+  //get most recent quizzes
+  const threeMostRecentQuizzes = room.quizzes.slice(0, 3);
+
+  //const getMostrect quiz
+  const mostRecentQuiz = room.quizzes[0];
+
+  const usersInRecentQuiz = await Promise.all(
+    mostRecentQuiz.attempts.map(async (attempt) => {
+      const user = await db.user.findUnique({
+        where: {
+          id: attempt.studentId,
+        },
+      });
+      return {
+        ...user,
+        score: attempt.score,
+        grade: attempt.grade,
+      };
+    })
+  );
+
   return (
-    <div className="">
+    <div className="flex flex-col gap-10">
       <OverallCards
         cards={user.usertype === "TEACHER" ? teacherCards : studentCards}
       />
+
+      <div className="space-y-5">
+        <div className="flex items-center justify-between">
+          <h1 className="font-semibold text-2xl">Recent quizzes</h1>
+          {room.quizzes.length > 3 && (
+            <Link
+              className={buttonVariants({ variant: "link" })}
+              href={`/rooms/${room.id}/quizzes`}
+            >
+              View all
+            </Link>
+          )}
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          {threeMostRecentQuizzes.map((quiz) => {
+            ///  console.log(quiz);
+            return <QuizCard key={quiz.id} quiz={quiz} />;
+          })}
+        </div>
+      </div>
+      <div className="space-y-5">
+        <h1 className="font-semibold text-2xl">Leaders board</h1>
+        <div className="h-96 bg-white">
+          {usersInRecentQuiz.length === 0 && (
+            <div className="w-full h-full flex items-center justify-center">
+              <h1 className="text-2xl font-semibold">
+                No one has attempted the quiz yet.
+              </h1>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 };
@@ -106,6 +164,33 @@ function OverallCard({ title, Icon, description, number, status }: CardProps) {
         </div>
       </CardContent>
     </Card>
+  );
+}
+
+interface QuizCardProps {
+  quiz: Quiz & { attempts: Attempt[] };
+}
+
+function QuizCard({ quiz }: QuizCardProps) {
+  return (
+    <Link
+      href={`/quizzes/${quiz.id}/`}
+      className="flex gap-3 flex-col bg-white rounded-lg p-2"
+    >
+      <div className="flex items-center justify-between">
+        <span className="font-semibold text-xl truncate">{quiz.title}</span>
+        <span className="text-sm text-gray-600">
+          {quiz.attempts.length} attempts
+        </span>
+      </div>
+      <div>
+        <div>
+          <span className="text-sm text-gray-600">
+            {new Date(quiz.createdAt).toLocaleDateString()}
+          </span>
+        </div>
+      </div>
+    </Link>
   );
 }
 

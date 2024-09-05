@@ -76,3 +76,34 @@ export async function createNewQuiz(values: QuizSchemaType, roomId: string) {
     console.error(error.message);
   }
 }
+
+export async function getQuizById(quizId: string) {
+  try {
+    const quiz = await db.quiz.findUnique({
+      where: { id: quizId },
+      include: {
+        questions: true,
+        attempts: true,
+      },
+    });
+
+    return quiz;
+  } catch (error: any) {
+    console.log("ERROR_GETTING_A_PARTICULAR_QUIZ");
+    throw new Error("Nothing");
+  }
+}
+
+export async function deleteQuiz(quizId: string) {
+  const user = await useUser();
+  if (!user) return;
+
+  try {
+    await db.quiz.delete({ where: { id: quizId, createdBy: user.id } });
+    revalidatePath("/dashboard");
+    return { message: "Quiz deleted successfully" };
+  } catch (error: any) {
+    console.log("ERROR_DELETING_QUIZ");
+    throw new Error("Error deleting quiz");
+  }
+}

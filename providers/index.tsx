@@ -24,7 +24,7 @@ const GlobalProvider = ({ children }: { children: ReactNode }) => {
     );
 
   return (
-    <>
+    <div className="max-w-7xl w-full mx-auto">
       <Toaster />
       <ThemeProvider
         attribute="class"
@@ -38,7 +38,7 @@ const GlobalProvider = ({ children }: { children: ReactNode }) => {
         />
         {children}
       </ThemeProvider>
-    </>
+    </div>
   );
 };
 
