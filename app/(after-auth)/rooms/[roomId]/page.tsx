@@ -14,6 +14,8 @@ import {
 } from "@/components/ui/card";
 import { useUser } from "@/hooks/use-user";
 import { db } from "@/lib/db";
+import { UserAttempt } from "@/types";
+import Image from "next/image";
 
 interface CardProps {
   title: string;
@@ -93,6 +95,57 @@ const RoomPage = async ({ params }: { params: { roomId: string } }) => {
     })
   );
 
+  //getting the average of the user atttempts
+  const userAttempts = await Promise.all(
+    mostRecentQuiz.attempts.map(async (attempt) => {
+      const user = await db.user.findFirst({
+        where: { id: attempt.studentId },
+      });
+
+      if (user) {
+        const allUserAttempts = mostRecentQuiz.attempts.filter(
+          (attempt) => attempt.studentId === user.id
+        );
+
+        const totalScore = allUserAttempts.reduce(
+          (acc, currAttempt) => acc + currAttempt.score,
+          0
+        );
+        const usersAverage = totalScore / allUserAttempts.length;
+
+        return {
+          userId: user.id,
+          userName: user.username,
+          averageScore: usersAverage,
+          totalAttempts: allUserAttempts.length,
+          profilePicture: user.profilePicture,
+          email: user.email,
+        };
+      }
+
+      return null;
+    })
+  );
+
+  // Filter out null values
+  const filteredUserAttempts = userAttempts.filter(
+    (attempt) => attempt !== null
+  );
+
+  // Remove duplicates by userId
+  const uniqueUserAttempts = filteredUserAttempts.reduce<UserAttempt[]>(
+    (acc, current) => {
+      const userExists = acc.find((item) => item.userId === current.userId);
+
+      if (!userExists) {
+        acc.push(current);
+      }
+
+      return acc;
+    },
+    []
+  );
+
   return (
     <div className="flex flex-col gap-10">
       <OverallCards
@@ -113,14 +166,13 @@ const RoomPage = async ({ params }: { params: { roomId: string } }) => {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {threeMostRecentQuizzes.map((quiz) => {
-            ///  console.log(quiz);
             return <QuizCard key={quiz.id} quiz={quiz} />;
           })}
         </div>
       </div>
       <div className="space-y-5">
         <h1 className="font-semibold text-2xl">Leaders board</h1>
-        <div className="h-96 bg-white">
+        <div className="min-h-96 bg-white">
           {usersInRecentQuiz.length === 0 && (
             <div className="w-full h-full flex items-center justify-center">
               <h1 className="text-2xl font-semibold">
@@ -128,6 +180,50 @@ const RoomPage = async ({ params }: { params: { roomId: string } }) => {
               </h1>
             </div>
           )}
+          <div>
+            {uniqueUserAttempts
+              .sort((a, b) => b.averageScore - a.averageScore)
+              .map((item, index) => {
+                //some code here
+
+                const userNameFirstLetter = item.userName[0];
+
+                return (
+                  <div
+                    key={item.userId}
+                    className="p-2 border-b border-border flex items-center justify-between"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-3">
+                        <p className="text-xs ">{index + 1}.</p>
+                        <div className="size-10 rounded-full relative overflow-hidden flex items-center justify-center">
+                          {item.profilePicture ? (
+                            <Image
+                              className="object-cover"
+                              fill
+                              src={item.profilePicture}
+                              alt={item.userName}
+                            />
+                          ) : (
+                            <span>{userNameFirstLetter}</span>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex flex-col">
+                        <span>{item.userName}</span>
+                        <span className="text-gray-600">{item.email}</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3 text-lg font-semibold">
+                      <span>{item.averageScore}</span>
+                    </div>
+                    <div className="text-sm text-gray-600">
+                      {item.totalAttempts} attempts
+                    </div>
+                  </div>
+                );
+              })}
+          </div>
         </div>
       </div>
     </div>

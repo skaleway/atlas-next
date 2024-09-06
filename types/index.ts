@@ -19,6 +19,15 @@ export type SidebarLinkItem = {
   icon: LucideIcon;
 };
 
+export type UserAttempt = {
+  userId: string;
+  userName: string;
+  averageScore: number;
+  totalAttempts: number;
+  profilePicture: string | null;
+  email: string;
+};
+
 export type RoomSchemaType = z.infer<typeof RoomSchema>;
 export type QuizSchemaType = z.infer<typeof createQuizSchema>;
 export type addUserToRoomType = z.infer<typeof addUserToRoomSchema>;

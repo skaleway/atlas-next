@@ -83,7 +83,11 @@ export async function getQuizById(quizId: string) {
       where: { id: quizId },
       include: {
         questions: true,
-        attempts: true,
+        attempts: {
+          include: {
+            student: true,
+          },
+        },
       },
     });
 

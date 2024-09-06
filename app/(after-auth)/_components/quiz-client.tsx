@@ -1,15 +1,18 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Attempt, Question, Quiz, User } from "@prisma/client";
-import React, { useState } from "react";
-import CreateQuestions from "./create-question";
-import { Check, Share, Share2 } from "lucide-react";
 import { useOrigin } from "@/hooks/user-origin";
+import { Attempt, Question, Quiz, User } from "@prisma/client";
+import { Check, Share2 } from "lucide-react";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
+import CreateQuestions from "./create-question";
 
 interface QuizClientProps {
-  quiz: Quiz & { attempts: Attempt[]; questions: Question[] };
+  quiz: Quiz & {
+    attempts: (Attempt & { student: User })[];
+    questions: Question[];
+  };
   user: User;
 }
 

@@ -14,6 +14,8 @@ const Quizzes = async ({ params }: { params: { quizId: string } }) => {
 
   if (!quiz) return notFound();
 
+  //console.log(quiz);
+
   return (
     <div className="py-20 min-h-screen max-w-5xl mx-auto">
       <QuizClient quiz={quiz} user={user} />
