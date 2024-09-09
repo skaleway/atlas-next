@@ -16,6 +16,7 @@ import { useUser } from "@/hooks/use-user";
 import { db } from "@/lib/db";
 import { UserAttempt } from "@/types";
 import Image from "next/image";
+import UserNotFound from "@/components/shared/user-not-found";
 
 interface CardProps {
   title: string;
@@ -28,7 +29,7 @@ interface CardProps {
 const RoomPage = async ({ params }: { params: { roomId: string } }) => {
   const user = await useUser();
 
-  if (!user) return null;
+  if (!user) return <UserNotFound />;
 
   const { room } = await findRoomById(params.roomId);
   if (!room) return notFound();
@@ -80,8 +81,10 @@ const RoomPage = async ({ params }: { params: { roomId: string } }) => {
   //const getMostrect quiz
   const mostRecentQuiz = room.quizzes[0];
 
+  const attempts = mostRecentQuiz?.attempts ?? [];
+
   const usersInRecentQuiz = await Promise.all(
-    mostRecentQuiz?.attempts?.map(async (attempt) => {
+    attempts.map(async (attempt) => {
       const user = await db.user.findUnique({
         where: {
           id: attempt.studentId,
@@ -97,13 +100,13 @@ const RoomPage = async ({ params }: { params: { roomId: string } }) => {
 
   //getting the average of the user atttempts
   const userAttempts = await Promise.all(
-    mostRecentQuiz?.attempts.map(async (attempt) => {
+    attempts.map(async (attempt) => {
       const user = await db.user.findFirst({
         where: { id: attempt.studentId },
       });
 
       if (user) {
-        const allUserAttempts = mostRecentQuiz?.attempts.filter(
+        const allUserAttempts = attempts.filter(
           (attempt) => attempt.studentId === user.id
         );
 
