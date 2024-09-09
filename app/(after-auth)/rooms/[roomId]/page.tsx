@@ -81,7 +81,7 @@ const RoomPage = async ({ params }: { params: { roomId: string } }) => {
   const mostRecentQuiz = room.quizzes[0];
 
   const usersInRecentQuiz = await Promise.all(
-    mostRecentQuiz.attempts.map(async (attempt) => {
+    mostRecentQuiz?.attempts?.map(async (attempt) => {
       const user = await db.user.findUnique({
         where: {
           id: attempt.studentId,
@@ -97,13 +97,13 @@ const RoomPage = async ({ params }: { params: { roomId: string } }) => {
 
   //getting the average of the user atttempts
   const userAttempts = await Promise.all(
-    mostRecentQuiz.attempts.map(async (attempt) => {
+    mostRecentQuiz?.attempts.map(async (attempt) => {
       const user = await db.user.findFirst({
         where: { id: attempt.studentId },
       });
 
       if (user) {
-        const allUserAttempts = mostRecentQuiz.attempts.filter(
+        const allUserAttempts = mostRecentQuiz?.attempts.filter(
           (attempt) => attempt.studentId === user.id
         );
 
@@ -276,7 +276,7 @@ function QuizCard({ quiz }: QuizCardProps) {
       <div className="flex items-center justify-between">
         <span className="font-semibold text-xl truncate">{quiz.title}</span>
         <span className="text-sm text-gray-600">
-          {quiz.attempts.length} attempts
+          {quiz?.attempts.length} attempts
         </span>
       </div>
       <div>
