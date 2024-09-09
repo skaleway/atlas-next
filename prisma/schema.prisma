@@ -102,6 +102,7 @@ model Question {
   options         String[]
   answer          String
   ansDesc         String?
+  position        Int
   quizId          String            @db.ObjectId
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
@@ -117,6 +118,7 @@ model Attempt {
   grade           Grade             @default(U)
   quizId          String            @db.ObjectId
   studentId       String            @db.ObjectId
+  duration        Int
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
   quiz            Quiz              @relation(fields: [quizId], references: [id], onDelete: Cascade)
@@ -129,6 +131,7 @@ model AttemptQuestion {
   attemptId  String   @db.ObjectId
   questionId String   @db.ObjectId
   answer     String
+  correct    Boolean
   attempt    Attempt  @relation(fields: [attemptId], references: [id], onDelete: Cascade)
   question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
   createdAt  DateTime @default(now())
