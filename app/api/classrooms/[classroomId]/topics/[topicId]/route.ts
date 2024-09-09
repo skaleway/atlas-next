@@ -1,21 +1,21 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db';
-import { currentUser } from '@clerk/nextjs/server';
-import { putReqBodyTopicSchema, reqRoomBodySchema } from '@/schema';
-import { findUserOneRoom } from '@/actions/room';
+import { NextRequest, NextResponse } from "next/server";
+import { db } from "@/lib/db";
+import { currentUser } from "@clerk/nextjs/server";
+import { putReqBodyTopicSchema, reqRoomBodySchema } from "@/schema";
+import { findUserOneRoom } from "@/actions/room";
 
 // get a classroom topic
 export async function GET(
   req: NextRequest,
-  { params }: { params: { classroomId: string; topicId: string } },
+  { params }: { params: { classroomId: string; topicId: string } }
 ) {
   try {
     if (!params.classroomId || !params.topicId) {
       return NextResponse.json(
         {
-          message: 'Classroom ID and Topic ID are required',
+          message: "Classroom ID and Topic ID are required",
         },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
@@ -28,8 +28,8 @@ export async function GET(
 
     if (!findTopic) {
       return NextResponse.json(
-        { message: 'Topic not found, verify params.' },
-        { status: 404 },
+        { message: "Topic not found, verify params." },
+        { status: 404 }
       );
     }
 
@@ -37,8 +37,8 @@ export async function GET(
   } catch (error: any) {
     console.error(error.message);
     return NextResponse.json(
-      { message: 'Internal server error' },
-      { status: 500 },
+      { message: "Internal server error" },
+      { status: 500 }
     );
   }
 }
@@ -46,13 +46,13 @@ export async function GET(
 // update a classroom topic
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { classroomId: string; topicId: string } },
+  { params }: { params: { classroomId: string; topicId: string } }
 ) {
   try {
     if (!params.classroomId || !params.topicId) {
       return NextResponse.json(
-        { message: 'Classroom ID and Topic ID are required' },
-        { status: 400 },
+        { message: "Classroom ID and Topic ID are required" },
+        { status: 400 }
       );
     }
 
@@ -64,8 +64,8 @@ export async function PUT(
 
     if (!findClassroom) {
       return NextResponse.json(
-        { message: 'Classroom not found' },
-        { status: 404 },
+        { message: "Classroom not found" },
+        { status: 404 }
       );
     }
 
@@ -77,13 +77,13 @@ export async function PUT(
     });
 
     if (!findTopic) {
-      return NextResponse.json({ message: 'Topic not found' }, { status: 404 });
+      return NextResponse.json({ message: "Topic not found" }, { status: 404 });
     }
 
     const user = await currentUser();
 
     if (!user) {
-      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
     const findRoomMember = await db.roomMember.findFirst({
@@ -93,7 +93,7 @@ export async function PUT(
       },
     });
 
-    if (!findRoomMember || findRoomMember.role !== 'ADMIN') {
+    if (!findRoomMember || findRoomMember.role !== "ADMIN") {
       const findUser = await db.user.findUnique({
         where: {
           id: user.id,
@@ -102,15 +102,15 @@ export async function PUT(
 
       if (!findUser) {
         return NextResponse.json(
-          { message: 'User not found' },
-          { status: 404 },
+          { message: "User not found" },
+          { status: 404 }
         );
       }
 
-      if (findUser.usertype !== 'ADMIN') {
+      if (findUser.usertype !== "ADMIN") {
         return NextResponse.json(
-          { message: 'Unauthorized to update topic' },
-          { status: 401 },
+          { message: "Unauthorized to update topic" },
+          { status: 401 }
         );
       }
     }
@@ -122,7 +122,7 @@ export async function PUT(
     if (!validateTopic.success) {
       return NextResponse.json(
         { message: JSON.stringify(validateTopic.error) },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
@@ -147,8 +147,8 @@ export async function PUT(
 
     if (!updatedTopic) {
       return NextResponse.json(
-        { message: 'Failed to update topic' },
-        { status: 500 },
+        { message: "Failed to update topic" },
+        { status: 500 }
       );
     }
 
@@ -156,8 +156,8 @@ export async function PUT(
   } catch (error: any) {
     console.error(error.message);
     return NextResponse.json(
-      { message: 'Internal server error' },
-      { status: 500 },
+      { message: "Internal server error" },
+      { status: 500 }
     );
   }
 }
@@ -165,20 +165,20 @@ export async function PUT(
 // delete a classroom topic
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { classroomId: string; topicId: string } },
+  { params }: { params: { classroomId: string; topicId: string } }
 ) {
   try {
     if (!params.classroomId || !params.topicId) {
       return NextResponse.json(
-        { message: 'Classroom ID and Topic ID are required' },
-        { status: 400 },
+        { message: "Classroom ID and Topic ID are required" },
+        { status: 400 }
       );
     }
 
     const user = await currentUser();
 
     if (!user) {
-      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
     const findRoomMember = await db.roomMember.findFirst({
@@ -188,7 +188,7 @@ export async function DELETE(
       },
     });
 
-    if (!findRoomMember || findRoomMember.role !== 'ADMIN') {
+    if (!findRoomMember || findRoomMember.role !== "ADMIN") {
       const findUser = await db.user.findUnique({
         where: {
           id: user.id,
@@ -197,15 +197,15 @@ export async function DELETE(
 
       if (!findUser) {
         return NextResponse.json(
-          { message: 'User not found' },
-          { status: 404 },
+          { message: "User not found" },
+          { status: 404 }
         );
       }
 
-      if (findUser.usertype !== 'ADMIN') {
+      if (findUser.usertype !== "ADMIN") {
         return NextResponse.json(
-          { message: 'Unauthorized to delete topic' },
-          { status: 401 },
+          { message: "Unauthorized to delete topic" },
+          { status: 401 }
         );
       }
     }
@@ -218,7 +218,7 @@ export async function DELETE(
     });
 
     if (!findTopic) {
-      return NextResponse.json({ message: 'Topic not found' }, { status: 404 });
+      return NextResponse.json({ message: "Topic not found" }, { status: 404 });
     }
 
     const deletedTopic = await db.topic.delete({
@@ -230,20 +230,20 @@ export async function DELETE(
 
     if (!deletedTopic) {
       return NextResponse.json(
-        { message: 'Failed to delete topic' },
-        { status: 500 },
+        { message: "Failed to delete topic" },
+        { status: 500 }
       );
     }
 
     return NextResponse.json({
-      message: 'Topic deleted successfully',
+      message: "Topic deleted successfully",
       data: deletedTopic,
     });
   } catch (error: any) {
     console.error(error.message);
     return NextResponse.json(
-      { message: 'Internal server error' },
-      { status: 500 },
+      { message: "Internal server error" },
+      { status: 500 }
     );
   }
 }

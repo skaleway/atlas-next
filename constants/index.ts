@@ -10,8 +10,13 @@ export const markettingNavbarRoutes: MarkettingNavbarLinkItem[] = [
 export const roomSidebarRoutes = (roomId: string): SidebarLinkItem[] => {
   return [
     {
-      name: "Quizes",
+      name: "Dashboard",
       path: `/rooms/${roomId}`,
+      icon: Activity,
+    },
+    {
+      name: "Quizzes",
+      path: `/rooms/${roomId}/quizzes`,
       icon: Activity,
     },
     {
