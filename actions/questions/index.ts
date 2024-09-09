@@ -41,6 +41,18 @@ export async function createQuestion(
     //extracting the values from the validData
     const { question: title, options, answer } = validData.data;
 
+    const lastContent = await db.question.findFirst({
+      where: {
+        quizId,
+      },
+      orderBy: {
+        position: "desc",
+      },
+    });
+
+    //creating a new postion
+    const newPosition = lastContent ? lastContent.position + 1 : 1;
+
     // Create question in the database
     const question = await db.question.create({
       data: {
@@ -48,6 +60,7 @@ export async function createQuestion(
         options,
         quizId,
         answer,
+        position: newPosition,
       },
     });
 
