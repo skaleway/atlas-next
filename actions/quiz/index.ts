@@ -82,7 +82,11 @@ export async function getQuizById(quizId: string) {
     const quiz = await db.quiz.findUnique({
       where: { id: quizId },
       include: {
-        questions: true,
+        questions: {
+          orderBy: {
+            position: "asc",
+          },
+        },
         attempts: {
           include: {
             student: true,

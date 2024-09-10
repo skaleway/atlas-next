@@ -45,7 +45,7 @@ const CreateQuestions = ({ quiz, setIsCreating }: CreateQuestionsProps) => {
     },
   });
 
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append } = useFieldArray({
     control: form.control,
     //@ts-ignore
     name: "options" as const,

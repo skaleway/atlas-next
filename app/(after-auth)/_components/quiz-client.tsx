@@ -1,9 +1,10 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { useOrigin } from "@/hooks/user-origin";
 import { Attempt, Question, Quiz, User } from "@prisma/client";
 import { Check, Share2 } from "lucide-react";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import CreateQuestions from "./create-question";
@@ -33,8 +34,6 @@ const QuizClient = ({ quiz, user }: QuizClientProps) => {
     }, 3000);
   };
 
-  async function handleAddUserAttempt() {}
-
   return (
     <div className="flex flex-col gap-10">
       <div className="flex items-center justify-between">
@@ -42,12 +41,13 @@ const QuizClient = ({ quiz, user }: QuizClientProps) => {
           {quiz.title}
         </h1>
         <div className="flex items-center gap-2">
-          {user.id === quiz.createdBy ? (
-            <Button onClick={() => setIsCreating((prev) => !prev)}>
-              Create Question
-            </Button>
-          ) : (
-            <Button onClick={handleAddUserAttempt}>Attempt</Button>
+          {user.id === quiz.createdBy && (
+            <Link
+              href={`/quizzes/${quiz.id}/create`}
+              className={buttonVariants({ variant: "outline" })}
+            >
+              Add Questions
+            </Link>
           )}
           <Button size="icon" onClick={handleCopy}>
             {isCopy ? (

@@ -82,3 +82,26 @@ export async function createQuestion(
     };
   }
 }
+
+export async function reOrderQuestions(
+  updatedList: { id: string; position: number }[],
+  quizId: string
+) {
+  const user = await useUser();
+
+  if (!user)
+    return {
+      message: "Unauthorized",
+    };
+
+  //  console.log(updatedList);
+
+  for (let item of updatedList) {
+    await db.question.update({
+      where: { id: item.id, quizId },
+      data: { position: item.position },
+    });
+  }
+
+  revalidatePath("/");
+}

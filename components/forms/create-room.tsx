@@ -35,15 +35,13 @@ const CreateRoom = () => {
 
   async function onSubmit(params: RoomSchemaType) {
     try {
-      const room = await createRoom(params);
-      if (room.message === "Unathorized") {
-        toast.error("Unauthorized Access");
-      }
+      const { message, room } = await createRoom(params);
+      if (!room) return toast.error(message);
 
-      if (room.room) {
+      if (room) {
         setValue("name", "");
         setValue("description", "");
-        router.refresh();
+        router.push(`/rooms/${room.id}`);
         toast.success("Room created successfully");
       }
     } catch (error: any) {

@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Question as Quest } from "@prisma/client";
 import { Control, Controller, FormProvider, useForm } from "react-hook-form";
+import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -13,6 +14,9 @@ import { Loading } from "@/components/shared/loading";
 import { cn } from "@/lib/utils";
 
 const Questions = ({ questions }: { questions: Quest[] }) => {
+  const [answers, setAnswers] = useState(Array(questions.length).fill(null));
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [score, setScore] = useState<number | null>(null);
   const form = useForm();
   const router = useRouter();
 
