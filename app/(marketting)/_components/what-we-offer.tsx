@@ -1,3 +1,4 @@
+import Image from "next/image";
 import React from "react";
 
 const WhatWeOffer = () => {
@@ -20,10 +21,10 @@ const WhatWeOffer = () => {
           </div>
         </div>
         <div className="mx-auto grid max-w-5xl items-center gap-6 py-12 lg:grid-cols-2 lg:gap-12">
-          <img
+          <Image
             src="/placeholder.svg"
-            width="700"
-            height="400"
+            width={700}
+            height={400}
             alt="ATLAS Dashboard"
             className="mx-auto aspect-video overflow-hidden rounded-xl object-cover object-center sm:w-full lg:order-last"
           />

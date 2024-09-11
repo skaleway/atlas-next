@@ -4,7 +4,11 @@ import { useUser } from "@/hooks/use-user";
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 
-export async function createAttemptWithScore(quizId: string, score: number) {
+export async function createAttemptWithScore(
+  quizId: string,
+  score: number,
+  duration: number
+) {
   try {
     const user = await useUser();
 
@@ -25,6 +29,7 @@ export async function createAttemptWithScore(quizId: string, score: number) {
         quizId,
         score,
         studentId: user.id,
+        duration,
       },
     });
 

@@ -52,7 +52,7 @@ const CreateQuizClient = ({ quiz, user }: CreateQuizClientProps) => {
               className={buttonVariants({ variant: "outline" })}
               href={`/quizzes/${quiz.id}`}
             >
-              Add Questions
+              Preview
             </Link>
           )}
         </div>

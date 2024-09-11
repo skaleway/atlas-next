@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
@@ -32,10 +33,10 @@ const Hero = () => {
             </div>
           </div>
           <div className="flex flex-col items-center justify-center">
-            <img
+            <Image
               src="/placeholder.svg"
-              width="700"
-              height="400"
+              width={700}
+              height={400}
               alt="ATLAS Dashboard"
               className="mx-auto aspect-[7/4] overflow-hidden rounded-xl object-cover object-center sm:w-full"
             />
